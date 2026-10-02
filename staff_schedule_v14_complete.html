@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>柴田屋OZ v1.4 COMPLETE</title>
+<style>
+:root{--ink:#17324b;--muted:#718395;--blue:#1478e8;--sky:#42c6eb;--line:#dce8f1;--yellow:#fff36b;--red:#d6424d;--care:#176bd4}
+*{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif;color:var(--ink);background:linear-gradient(#f7fcff,#fff);padding-bottom:84px}
+header{position:sticky;top:0;z-index:20;background:#fffffff2;backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding:10px 12px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:950} .oz{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--blue),var(--sky));color:#fff;font-weight:1000;box-shadow:0 0 0 6px #eaf6ff}
+.small{font-size:12px;color:var(--muted)} main{padding:10px;max-width:720px;margin:auto}
+.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:13px;margin:10px 0;box-shadow:0 8px 25px #1b658b0b}
+.datebar,.staffs{display:flex;gap:7px;overflow:auto;scrollbar-width:none}
+button,.btn{border:0;border-radius:13px;padding:10px 13px;font-weight:900;background:#edf4f9;color:var(--ink)} .staffs button{white-space:nowrap} .staffs button.on{background:linear-gradient(135deg,var(--blue),var(--sky));color:#fff}
+.sectiontitle{display:flex;justify-content:space-between;align-items:center;margin:14px 3px 7px} .sectiontitle b{font-size:17px}
+.slot{display:grid;grid-template-columns:58px 1fr 28px;gap:8px;align-items:center;min-height:58px;border-top:1px solid #edf2f6;padding:7px 2px} .slot:first-child{border-top:0}
+.time{font-weight:950;color:#0e64b4} .box{min-height:43px;border-radius:13px;padding:7px 10px;background:#f7fafc;border:1px solid #edf1f4}
+.box.empty{color:#9aa9b5} .box.closed{background:repeating-linear-gradient(45deg,#f8fafb,#f8fafb 8px,#74838f 9px,#74838f 11px);font-weight:900}
+.box.phys{background:var(--yellow);font-weight:900} .name{font-weight:950} .care{color:var(--care)} .bundle{color:var(--red)} .chev{font-size:22px;color:#9aabb8}
+.search{width:100%;padding:13px;border:1px solid var(--line);border-radius:13px;font:inherit} .result{padding:12px;border-bottom:1px solid #edf2f6;cursor:pointer} .result:last-child{border-bottom:0}
+.badge{font-size:11px;border-radius:99px;background:#eef4f8;padding:4px 7px} .shiftrow{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #edf2f6}
+.shiftrow select{max-width:205px;padding:9px;border:1px solid var(--line);border-radius:11px;background:#fff}
+.bottom{position:fixed;bottom:0;left:0;right:0;z-index:30;background:#fffffff4;backdrop-filter:blur(15px);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(3,1fr);padding:7px 8px calc(7px + env(safe-area-inset-bottom))}
+.bottom button{background:none;padding:7px;color:#6f8292} .bottom button.on{color:var(--blue)}
+.modalbg{display:none;position:fixed;inset:0;background:#10253699;z-index:50;align-items:flex-end} .modalbg.show{display:flex}
+.sheet{width:100%;max-height:88vh;overflow:auto;background:#fff;border-radius:24px 24px 0 0;padding:17px 15px calc(20px + env(safe-area-inset-bottom))}
+.handle{width:44px;height:5px;border-radius:99px;background:#d9e2e8;margin:0 auto 14px} .choice{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.choice button{padding:14px 8px;border:1px solid var(--line);background:#f7fafc} .choice .yellow{background:var(--yellow)} .manual{font-size:9px;color:#ff7b00}
+.notice{padding:10px 12px;border-left:4px solid var(--blue);background:#eef8ff;border-radius:11px;margin:10px 0}
+</style>
+</head>
+<body>
+<header><div class="brand"><div class="oz">OZ</div><div>柴田屋整形外科<div class="small">OZ STAFF SYSTEM v1.4 COMPLETE</div></div></div></header>
+<main>
+<div class="card"><div class="datebar"><button disabled>‹ 前日</button><button style="background:#1478e8;color:#fff">10月1日（木）</button><button disabled>翌日 ›</button></div></div>
+
+<section id="ptview">
+<div class="notice">PT別の20分予約表です。枠をタップして予約・物療・閉鎖・シフト設定への復帰を操作できます。</div>
+<div class="card"><div class="small">担当PT</div><div id="staffs" class="staffs"></div></div>
+<div id="schedule"></div>
+</section>
+
+<section id="searchview" style="display:none">
+<div class="card">
+<h2 style="margin-top:0">患者検索 <span class="small">v1.4</span></h2>
+<div class="small">数字だけを入力した場合は患者番号の完全一致。氏名は部分一致です。</div>
+<input id="search" class="search" inputmode="search" autocomplete="off" placeholder="患者名 / 患者番号">
+<div id="searchcount" class="small" style="margin:10px 0"></div>
+<div id="results"></div>
+</div>
+</section>
+
+<section id="shiftview" style="display:none">
+<div class="card"><h2 style="margin-top:0">今日のシフト</h2><div class="small">変更は予約表へ即時反映します。</div><div id="shiftlist"></div></div>
+</section>
+</main>
+
+<nav class="bottom">
+<button id="navpt" class="on" onclick="view('pt')">▦<br>予約</button>
+<button id="navsearch" onclick="view('search')">⌕<br>患者</button>
+<button id="navshift" onclick="view('shift')">◫<br>シフト</button>
+</nav>
+
+<div id="slotmodal" class="modalbg" onclick="if(event.target===this)closeSlot()"><div class="sheet"><div class="handle"></div><h3 id="slottitle"></h3><div id="slotstatus" class="small"></div><div style="height:12px"></div><div class="choice">
+<button onclick="choosePatient()">＋ 患者を予約</button>
+<button class="yellow" onclick="slotAct('phys')">物療にする</button>
+<button onclick="slotAct('closed')">枠を閉じる</button>
+<button onclick="slotAct('normal')">通常枠にする</button>
+<button onclick="removeBooking()">予約を取消</button>
+<button onclick="slotAct('base')">シフト設定に戻す</button>
+</div></div></div>
+
+<div id="patientmodal" class="modalbg" onclick="if(event.target===this)closePatient()"><div class="sheet"><div class="handle"></div><h3>この枠に予約</h3>
+<input id="psearch" class="search" inputmode="search" autocomplete="off" placeholder="患者名 / 患者番号" oninput="renderPicker()"><div id="picker"></div></div></div>
+
+<script>
+const STAFF=["本院","山口","竹谷","赤尾","中西","釆野","増田","都築","伊藤","長谷川","山梨","松田"];
+const AM=["09:00","09:20","09:40","10:00","10:20","10:40","11:00","11:20","11:40","12:00"];
+const PM=["15:00","15:20","15:40","16:00","16:20","16:40","17:00","17:20","17:40","18:00","18:20","18:40","19:00"];
+const PATIENTS=[{"id":"1","name":"佐藤 太郎","t":"general"},{"id":"2","name":"鈴木 直子","t":"care"},{"id":"3","name":"高橋 誠","t":"general"},{"id":"4","name":"田中 花子","t":"general"},{"id":"5","name":"伊藤 大輔","t":"bundle"},{"id":"6","name":"渡辺 由美","t":"general"},{"id":"7","name":"山本 一郎","t":"general"},{"id":"8","name":"中村 陽子","t":"care"},{"id":"9","name":"小林 亮","t":"general"},{"id":"10","name":"加藤 美咲","t":"general"},{"id":"11","name":"吉田 拓海","t":"general"},{"id":"12","name":"山田 京子","t":"care"},{"id":"13","name":"松本 健太","t":"general"},{"id":"14","name":"井上 恵","t":"general"},{"id":"15","name":"木村 浩二","t":"bundle"},{"id":"16","name":"林 和子","t":"general"},{"id":"17","name":"清水 悠斗","t":"general"},{"id":"18","name":"山口 麻衣","t":"care"},{"id":"19","name":"森 翔太","t":"general"},{"id":"20","name":"池田 愛","t":"general"},{"id":"21","name":"佐藤 太郎","t":"general"},{"id":"22","name":"鈴木 直子","t":"care"},{"id":"23","name":"高橋 誠","t":"general"},{"id":"24","name":"田中 花子","t":"general"},{"id":"25","name":"伊藤 大輔","t":"bundle"},{"id":"26","name":"渡辺 由美","t":"general"},{"id":"27","name":"山本 一郎","t":"general"},{"id":"28","name":"中村 陽子","t":"care"},{"id":"29","name":"小林 亮","t":"general"},{"id":"30","name":"加藤 美咲","t":"general"},{"id":"31","name":"吉田 拓海","t":"general"},{"id":"32","name":"山田 京子","t":"care"},{"id":"33","name":"松本 健太","t":"general"},{"id":"34","name":"井上 恵","t":"general"},{"id":"35","name":"木村 浩二","t":"bundle"},{"id":"36","name":"林 和子","t":"general"},{"id":"37","name":"清水 悠斗","t":"general"},{"id":"38","name":"山口 麻衣","t":"care"},{"id":"39","name":"森 翔太","t":"general"},{"id":"40","name":"池田 愛","t":"general"},{"id":"41","name":"佐藤 太郎","t":"general"},{"id":"42","name":"鈴木 直子","t":"care"},{"id":"43","name":"高橋 誠","t":"general"},{"id":"44","name":"田中 花子","t":"general"},{"id":"45","name":"伊藤 大輔","t":"bundle"},{"id":"46","name":"渡辺 由美","t":"general"},{"id":"47","name":"山本 一郎","t":"general"},{"id":"48","name":"中村 陽子","t":"care"},{"id":"49","name":"小林 亮","t":"general"},{"id":"50","name":"加藤 美咲","t":"general"},{"id":"51","name":"吉田 拓海","t":"general"},{"id":"52","name":"山田 京子","t":"care"},{"id":"53","name":"松本 健太","t":"general"},{"id":"54","name":"井上 恵","t":"general"},{"id":"55","name":"木村 浩二","t":"bundle"},{"id":"56","name":"林 和子","t":"general"},{"id":"57","name":"清水 悠斗","t":"general"},{"id":"58","name":"山口 麻衣","t":"care"},{"id":"59","name":"森 翔太","t":"general"},{"id":"60","name":"池田 愛","t":"general"},{"id":"61","name":"佐藤 太郎","t":"general"},{"id":"62","name":"鈴木 直子","t":"care"},{"id":"63","name":"高橋 誠","t":"general"},{"id":"64","name":"田中 花子","t":"general"},{"id":"65","name":"伊藤 大輔","t":"bundle"},{"id":"66","name":"渡辺 由美","t":"general"},{"id":"67","name":"山本 一郎","t":"general"},{"id":"68","name":"中村 陽子","t":"care"},{"id":"69","name":"小林 亮","t":"general"},{"id":"70","name":"加藤 美咲","t":"general"},{"id":"71","name":"吉田 拓海","t":"general"},{"id":"72","name":"山田 京子","t":"care"},{"id":"73","name":"松本 健太","t":"general"},{"id":"74","name":"井上 恵","t":"general"},{"id":"75","name":"木村 浩二","t":"bundle"},{"id":"76","name":"林 和子","t":"general"},{"id":"77","name":"清水 悠斗","t":"general"},{"id":"78","name":"山口 麻衣","t":"care"},{"id":"79","name":"森 翔太","t":"general"},{"id":"80","name":"池田 愛","t":"general"},{"id":"81","name":"佐藤 太郎","t":"general"},{"id":"82","name":"鈴木 直子","t":"care"},{"id":"83","name":"高橋 誠","t":"general"},{"id":"84","name":"田中 花子","t":"general"},{"id":"85","name":"伊藤 大輔","t":"bundle"},{"id":"86","name":"渡辺 由美","t":"general"},{"id":"87","name":"山本 一郎","t":"general"},{"id":"88","name":"中村 陽子","t":"care"},{"id":"89","name":"小林 亮","t":"general"},{"id":"90","name":"加藤 美咲","t":"general"},{"id":"91","name":"吉田 拓海","t":"general"},{"id":"92","name":"山田 京子","t":"care"},{"id":"93","name":"松本 健太","t":"general"},{"id":"94","name":"井上 恵","t":"general"},{"id":"95","name":"木村 浩二","t":"bundle"},{"id":"96","name":"林 和子","t":"general"},{"id":"97","name":"清水 悠斗","t":"general"},{"id":"98","name":"山口 麻衣","t":"care"},{"id":"99","name":"森 翔太","t":"general"},{"id":"100","name":"池田 愛","t":"general"},{"id":"101","name":"佐藤 太郎","t":"general"},{"id":"102","name":"鈴木 直子","t":"care"},{"id":"103","name":"高橋 誠","t":"general"},{"id":"104","name":"田中 花子","t":"general"},{"id":"105","name":"伊藤 大輔","t":"bundle"},{"id":"106","name":"渡辺 由美","t":"general"},{"id":"107","name":"山本 一郎","t":"general"},{"id":"108","name":"中村 陽子","t":"care"},{"id":"109","name":"小林 亮","t":"general"},{"id":"110","name":"加藤 美咲","t":"general"},{"id":"111","name":"吉田 拓海","t":"general"},{"id":"112","name":"山田 京子","t":"care"},{"id":"113","name":"松本 健太","t":"general"},{"id":"114","name":"井上 恵","t":"general"},{"id":"115","name":"木村 浩二","t":"bundle"},{"id":"116","name":"林 和子","t":"general"},{"id":"117","name":"清水 悠斗","t":"general"},{"id":"118","name":"山口 麻衣","t":"care"},{"id":"119","name":"森 翔太","t":"general"},{"id":"120","name":"池田 愛","t":"general"},{"id":"121","name":"佐藤 太郎","t":"general"},{"id":"122","name":"鈴木 直子","t":"care"},{"id":"123","name":"高橋 誠","t":"general"},{"id":"124","name":"田中 花子","t":"general"},{"id":"125","name":"伊藤 大輔","t":"bundle"},{"id":"126","name":"渡辺 由美","t":"general"},{"id":"127","name":"山本 一郎","t":"general"},{"id":"128","name":"中村 陽子","t":"care"},{"id":"129","name":"小林 亮","t":"general"},{"id":"130","name":"加藤 美咲","t":"general"},{"id":"131","name":"吉田 拓海","t":"general"},{"id":"132","name":"山田 京子","t":"care"},{"id":"133","name":"松本 健太","t":"general"},{"id":"134","name":"井上 恵","t":"general"},{"id":"135","name":"木村 浩二","t":"bundle"},{"id":"136","name":"林 和子","t":"general"},{"id":"137","name":"清水 悠斗","t":"general"},{"id":"138","name":"山口 麻衣","t":"care"},{"id":"139","name":"森 翔太","t":"general"},{"id":"140","name":"池田 愛","t":"general"},{"id":"141","name":"佐藤 太郎","t":"general"},{"id":"142","name":"鈴木 直子","t":"care"},{"id":"143","name":"高橋 誠","t":"general"},{"id":"144","name":"田中 花子","t":"general"},{"id":"145","name":"伊藤 大輔","t":"bundle"},{"id":"146","name":"渡辺 由美","t":"general"},{"id":"147","name":"山本 一郎","t":"general"},{"id":"148","name":"中村 陽子","t":"care"},{"id":"149","name":"小林 亮","t":"general"},{"id":"150","name":"加藤 美咲","t":"general"},{"id":"151","name":"吉田 拓海","t":"general"},{"id":"152","name":"山田 京子","t":"care"},{"id":"153","name":"松本 健太","t":"general"},{"id":"154","name":"井上 恵","t":"general"},{"id":"155","name":"木村 浩二","t":"bundle"},{"id":"156","name":"林 和子","t":"general"},{"id":"157","name":"清水 悠斗","t":"general"},{"id":"158","name":"山口 麻衣","t":"care"},{"id":"159","name":"森 翔太","t":"general"},{"id":"160","name":"池田 愛","t":"general"},{"id":"161","name":"佐藤 太郎","t":"general"},{"id":"162","name":"鈴木 直子","t":"care"},{"id":"163","name":"高橋 誠","t":"general"},{"id":"164","name":"田中 花子","t":"general"},{"id":"165","name":"伊藤 大輔","t":"bundle"},{"id":"166","name":"渡辺 由美","t":"general"},{"id":"167","name":"山本 一郎","t":"general"},{"id":"168","name":"中村 陽子","t":"care"},{"id":"169","name":"小林 亮","t":"general"},{"id":"170","name":"加藤 美咲","t":"general"},{"id":"171","name":"吉田 拓海","t":"general"},{"id":"172","name":"山田 京子","t":"care"},{"id":"173","name":"松本 健太","t":"general"},{"id":"174","name":"井上 恵","t":"general"},{"id":"175","name":"木村 浩二","t":"bundle"},{"id":"176","name":"林 和子","t":"general"},{"id":"177","name":"清水 悠斗","t":"general"},{"id":"178","name":"山口 麻衣","t":"care"},{"id":"179","name":"森 翔太","t":"general"},{"id":"180","name":"池田 愛","t":"general"},{"id":"181","name":"佐藤 太郎","t":"general"},{"id":"182","name":"鈴木 直子","t":"care"},{"id":"183","name":"高橋 誠","t":"general"},{"id":"184","name":"田中 花子","t":"general"},{"id":"185","name":"伊藤 大輔","t":"bundle"},{"id":"186","name":"渡辺 由美","t":"general"},{"id":"187","name":"山本 一郎","t":"general"},{"id":"188","name":"中村 陽子","t":"care"},{"id":"189","name":"小林 亮","t":"general"},{"id":"190","name":"加藤 美咲","t":"general"},{"id":"191","name":"吉田 拓海","t":"general"},{"id":"192","name":"山田 京子","t":"care"},{"id":"193","name":"松本 健太","t":"general"},{"id":"194","name":"井上 恵","t":"general"},{"id":"195","name":"木村 浩二","t":"bundle"},{"id":"196","name":"林 和子","t":"general"},{"id":"197","name":"清水 悠斗","t":"general"},{"id":"198","name":"山口 麻衣","t":"care"},{"id":"199","name":"森 翔太","t":"general"},{"id":"200","name":"池田 愛","t":"general"},{"id":"10012","name":"天塚 文隆","t":"general"},{"id":"10021","name":"加藤 花子","t":"bundle"},{"id":"10046","name":"山口 一郎","t":"care"},{"id":"10056","name":"伊藤 美咲","t":"general"}];
+const KEY="shibataya_v14_complete";
+function fresh(){
+  const shift={}; STAFF.forEach(s=>shift[s]="normal");
+  shift["本院"]="phys"; shift["松田"]="full"; shift["山梨"]="pmoff"; shift["増田"]="600";
+  return {date:"2026-10-01",shift,override:{},slotOverride:{},slots:{}};
+}
+let D;
+try{D=JSON.parse(localStorage.getItem(KEY)||"null")||fresh();}catch(e){D=fresh();}
+D.shift=D.shift||fresh().shift; D.override=D.override||{}; D.slotOverride=D.slotOverride||{}; D.slots=D.slots||{};
+let current="山口", edit=null;
+function save(){localStorage.setItem(KEY,JSON.stringify(D));}
+function norm(v){return String(v??"").trim().toLowerCase().replace(/\s+/g,"");}
+function searchPatients(query){
+  const raw=String(query??"").trim();
+  if(!raw) return [];
+  const q=norm(raw);
+  if(/^\d+$/.test(raw)) {
+    const exact=PATIENTS.find(p=>String(p.id)===raw);
+    return exact?[exact]:[];
+  }
+  return PATIENTS.filter(p=>norm(p.name).includes(q)).slice(0,50);
+}
+function label(t){return t==="care"?"介護":t==="bundle"?"まとめ":"一般";}
+function effective(s){return D.override[s]||D.shift[s]||"normal";}
+function baseState(s,t){
+  const x=effective(s),h=parseInt(t,10);
+  if(x==="full"||(x==="amoff"&&h<15)||(x==="pmoff"&&h>=15)||(x==="600"&&h>=18)) return "closed";
+  if(x==="phys"||(x==="physam"&&h<15)||(x==="physpm"&&h>=15)) return "phys";
+  return "normal";
+}
+function slotState(s,t){return D.slotOverride[t+"|"+s]||baseState(s,t);}
+function renderStaffs(){document.getElementById("staffs").innerHTML=STAFF.map(s=>`<button class="${s===current?"on":""}" onclick="current='${s}';renderStaffs();renderSchedule()">${s}</button>`).join("");}
+function section(title,times){return `<div class="sectiontitle"><b>${title}</b><span class="small">${current}</span></div><div class="card">${times.map(slotHtml).join("")}</div>`;}
+function slotHtml(t){
+  const k=t+"|"+current, st=slotState(current,t), x=D.slots[k], manual=Object.prototype.hasOwnProperty.call(D.slotOverride,k);
+  let body;
+  if(st==="closed") body=`<div class="box closed">閉鎖</div>`;
+  else if(st==="phys") body=`<div class="box phys">物療担当・直接予約不可</div>`;
+  else if(x) body=`<div class="box"><div class="name ${x.t}">${x.name}</div><div class="small">#${x.id} / ${label(x.t)}</div></div>`;
+  else body=`<div class="box empty">空き</div>`;
+  return `<div class="slot" onclick="openSlot('${t}')"><div class="time">${t}${manual?'<div class="manual">手動</div>':""}</div>${body}<div class="chev">›</div></div>`;
+}
+function renderSchedule(){document.getElementById("schedule").innerHTML=section("午前",AM)+section("午後",PM);}
+function openSlot(t){
+  edit={s:current,t,k:t+"|"+current};
+  const b=baseState(current,t), st=slotState(current,t);
+  document.getElementById("slottitle").textContent=current+" "+t;
+  document.getElementById("slotstatus").textContent="シフト由来："+stateLabel(b)+" ／ 現在："+stateLabel(st);
+  document.getElementById("slotmodal").classList.add("show");
+}
+function stateLabel(v){return v==="closed"?"閉鎖":v==="phys"?"物療":"通常";}
+function closeSlot(){document.getElementById("slotmodal").classList.remove("show");}
+function slotAct(v){
+  if(!edit)return;
+  if(v==="base") delete D.slotOverride[edit.k]; else D.slotOverride[edit.k]=v;
+  save(); closeSlot(); renderSchedule();
+}
+function removeBooking(){if(!edit)return; delete D.slots[edit.k]; save(); closeSlot(); renderSchedule();}
+function choosePatient(){
+  if(!edit)return; closeSlot();
+  document.getElementById("psearch").value="";
+  document.getElementById("picker").innerHTML='<div class="small" style="padding:12px">患者番号または氏名を入力してください。</div>';
+  document.getElementById("patientmodal").classList.add("show");
+  setTimeout(()=>document.getElementById("psearch").focus(),50);
+}
+function closePatient(){document.getElementById("patientmodal").classList.remove("show");}
+function renderPicker(){
+  const matches=searchPatients(document.getElementById("psearch").value);
+  document.getElementById("picker").innerHTML=matches.length?matches.map(p=>`<div class="result" onclick="book('${p.id}')"><b>${p.name}</b> <span class="badge">${label(p.t)}</span><div class="small">患者番号 ${p.id}</div></div>`).join(""):'<div class="small" style="padding:12px">該当する患者が見つかりません。</div>';
+}
+function book(id){
+  const p=PATIENTS.find(x=>x.id===id); if(!p||!edit)return;
+  D.slots[edit.k]={id:p.id,name:p.name,t:p.t};
+  D.slotOverride[edit.k]="normal";
+  save(); closePatient(); renderSchedule();
+}
+function renderSearch(){
+  const q=document.getElementById("search").value;
+  const matches=searchPatients(q);
+  const count=document.getElementById("searchcount"), out=document.getElementById("results");
+  if(!String(q).trim()){count.textContent=`登録患者 ${PATIENTS.length}名`;out.innerHTML='<div class="small" style="padding:12px">患者番号または氏名を入力してください。</div>';return;}
+  count.textContent=`検索結果 ${matches.length}件`;
+  out.innerHTML=matches.length?matches.map(p=>`<div class="result"><b>${p.name}</b> <span class="badge">${label(p.t)}</span><div class="small">患者番号 ${p.id}</div></div>`).join(""):'<div class="small" style="padding:12px">該当する患者が見つかりません。</div>';
+}
+function desc(x){return {normal:"通常",full:"全日休み",amoff:"午前休み",pmoff:"午後休み","600":"600（18時上がり）",phys:"終日物療",physam:"午前のみ物療",physpm:"午後のみ物療"}[x]||x;}
+function renderShift(){
+ const opts=[["normal","通常"],["full","全日休み"],["amoff","午前休み"],["pmoff","午後休み"],["600","600（18時上がり）"],["phys","終日物療"],["physam","午前のみ物療"],["physpm","午後のみ物療"]];
+ document.getElementById("shiftlist").innerHTML=STAFF.map(s=>`<div class="shiftrow"><b>${s}</b><select onchange="setShift('${s}',this.value)">${opts.map(o=>`<option value="${o[0]}" ${o[0]===D.shift[s]?"selected":""}>${o[1]}</option>`).join("")}</select></div>`).join("");
+}
+function setShift(s,v){D.shift[s]=v;delete D.override[s];save();renderShift();renderSchedule();}
+function view(v){
+ ["pt","search","shift"].forEach(x=>{document.getElementById(x+"view").style.display=x===v?"block":"none";document.getElementById("nav"+x).classList.toggle("on",x===v);});
+ if(v==="shift")renderShift(); if(v==="search")renderSearch();
+}
+document.addEventListener("DOMContentLoaded",()=>{
+ renderStaffs();renderSchedule();renderShift();
+ document.getElementById("search").addEventListener("input",renderSearch);
+});
+</script>
+</body></html>
