@@ -1,0 +1,62 @@
+柴田屋OZ v1.9 検証記録
+状態：未完成 / ZIP化保留
+
+処理テスト：39項目 PASS（Node VM、DOMスタブ使用）
+実ブラウザ上の操作・描画テストではありません。
+JavaScript構文：node --check PASS
+転記した参照JSの既存関数：45個すべて存在
+重要関数本文比較：24個一致
+患者204件・時間・スタッフ・保存キー維持：PASS
+外部ファイル依存なし、index.htmlと.nojekyll存在：PASS
+原本HTML全体のコピー/比較：未実施
+v15/v16/v17との比較：未実施（未入手）
+
+処理テスト結果：
+PASS 完全一致検索 1
+PASS 完全一致検索 100
+PASS 完全一致検索 200
+PASS 完全一致検索 10046
+PASS 氏名部分一致・空白正規化
+PASS スタッフ・時間・患者データ維持
+PASS 全PT横並び・中央時間・午後見出し
+PASS 検索カードからの予約
+PASS 予約移動・元枠消去
+PASS 予約入れ替え拒否・承認
+PASS 患者予約上書き拒否・承認
+PASS 閉鎖→通常化を拒否したら予約なし
+PASS 閉鎖→通常化承認して予約
+PASS 患者設定・メモ保存・マスター不変
+PASS 予約移動メニュー経由でメモ保持
+PASS 予約解除
+PASS 枠設定 normal
+PASS 枠設定 closed
+PASS 枠設定 phys
+PASS 枠設定 base
+PASS シフト連携 full
+PASS シフト連携 amoff
+PASS シフト連携 pmoff
+PASS シフト連携 600
+PASS 勤務コード 730 は推測閉鎖なし
+PASS 勤務コード 715 は推測閉鎖なし
+PASS 勤務コード 700 は推測閉鎖なし
+PASS 物療系シフト
+PASS 手動上書き優先・シフトへ戻す
+PASS シフト閉鎖後も予約表示・要確認
+PASS 予約あり枠の閉鎖確認・予約保持
+PASS 保存キー・既存データ形式維持
+PASS シフト一覧12人・大きな記号
+PASS mouse PointerEvent 円形8方向判定・確定・終了
+PASS touch PointerEvent 円形8方向判定・確定・終了
+PASS 円形キャンセル・中心離し・短押し・リスナー除去
+PASS 患者カード短タップでドラッグ終了・リスナー除去
+PASS 保存失敗時に表示・通知
+PASS HTML文字列のエスケープ
+
+未実施：画面描画と目視、実PCマウスのドラッグ、実Touchドラッグ/タップ、円形アニメーション/浮上/画面端、実ブラウザ再読み込み、GitHub Pages実配置。
+ブラウザ起動はsocket() Operation not permittedで停止。Playwrightテストスクリプト準備済み・実行不可。
+全PASS要件を満たさないため完成版ZIPは作成しない。
+
+index.html SHA256: 54b8f90a26b14bb3776d43406257ae4c43267e336d0924837ce98b7d16731f0a
+
+変更：明るいUI構造/CSS、患者操作用関数、slotCell/openSlot/slotAct/book、シフト一覧、ドラッグ開始/移動/終了、ポインター終了、save、closePop/showTab。
+検索/枠状態/保存構造は維持。予約関数の欠落なし。原本HTMLを100%コピー済みとは主張しない。
