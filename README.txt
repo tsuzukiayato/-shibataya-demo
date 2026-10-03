@@ -1,4 +1,6 @@
-柴田屋OZ v1.8 NEON BLUE COMPLETE
+柴田屋OZ STAFF SYSTEM 完成版
 
-GitHubへ staff_schedule_v18_neon_blue_complete.html をアップロードしてください。
-v17の機能を維持し、全体UIをダークネイビー＋ネオンブルー/シアンのHUD/Glassテーマへ変更。
+GitHub Pages公開用です。
+このZIPを解凍し、中のファイルをリポジトリのルートへアップロードしてください。
+本体は index.html です。
+公開URL: https://tsuzukiyayato.github.io/-shibataya-demo/
