@@ -1,0 +1,18 @@
+Shibataya OZ v2.0 verification
+
+PASS  index fixed
+PASS  patient search
+PASS  drag patient
+PASS  drag fixed size
+PASS  patient settings search
+PASS  patient settings booked
+PASS  cancel booking
+PASS  20min slot
+PASS  shift codes
+PASS  shift symbols
+PASS  radial hidden
+PASS  bright UI
+PASS  mobile
+PASS  no absolute assets
+PASS  javascript syntax
+PASS  golden functions retained
