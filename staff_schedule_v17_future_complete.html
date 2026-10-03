@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="ja"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>柴田屋OZ v1.7 FUTURE COMPLETE</title>
+<style>
+:root{--ink:#17324b;--muted:#708397;--line:#aebdca;--blue:#1478e8;--sky:#40c4e9;--yellow:#fff36b;--red:#d6424d;--care:#176bd4}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif;color:var(--ink);background:linear-gradient(#fff,#f5fbff)}
+.wrap{max-width:1700px;margin:auto;padding:12px}.top{display:flex;justify-content:space-between;align-items:center;gap:9px;flex-wrap:wrap}.brand{display:flex;align-items:center;gap:10px;font-weight:950}.logo{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--blue),var(--sky));color:#fff;font-weight:1000;box-shadow:0 0 0 7px #eaf5ff}
+.card{background:#fff;border:1px solid #dce8f1;border-radius:20px;padding:13px;margin:10px 0;box-shadow:0 8px 24px #24658c0b}.muted{color:var(--muted);font-size:12px}.btn{border:0;border-radius:12px;padding:10px 13px;font-weight:900;background:#edf4f9;color:var(--ink);cursor:pointer}.primary,.tab.on{background:linear-gradient(135deg,var(--blue),var(--sky));color:#fff}.tabs,.controls{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.workspace{display:grid;grid-template-columns:235px minmax(1280px,1fr);gap:10px;align-items:start}.side{position:sticky;top:7px}.search{width:100%;padding:10px;border:1px solid #d4e1eb;border-radius:12px;font:inherit}.plist{display:grid;gap:7px;margin-top:8px;max-height:72vh;overflow:auto}.pcard,.result{padding:9px;border:1px solid #dce6ee;border-radius:13px;background:#fff;cursor:grab}.pcard{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#111;margin-right:5px}.pcard.care .dot{background:var(--care)}.pcard.bundle .dot{background:var(--red)}
+.boardwrap{overflow:auto;border:1px solid #cbd9e5;border-radius:17px;background:#fff}.board{border-collapse:collapse;min-width:1320px;width:100%;table-layout:fixed}.board th,.board td{border:1px solid var(--line)}.staffhead{height:45px;background:linear-gradient(#edf8ff,#fff);font-weight:950}.timecol{width:75px;text-align:center;font-weight:950;background:#eef8ff!important;color:#0e5fac;border-left:3px solid #85c8f5!important;border-right:3px solid #85c8f5!important}.slot{height:48px;padding:3px;background:#fff;position:relative;cursor:pointer}.slot.closed{background:repeating-linear-gradient(45deg,#f8fafb,#f8fafb 8px,#6f7f8c 9px,#6f7f8c 11px)}.slot.phys{background:var(--yellow)}.slot.manual:after{content:"•";position:absolute;right:3px;top:-2px;color:#ff7b00;font-size:15px;font-weight:1000}.slot.drop{box-shadow:inset 0 0 0 3px #2aa8f7;background:#eaf7ff}.appt{height:100%;border-radius:9px;padding:5px;background:#fff;box-shadow:0 2px 8px #1232;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none;-webkit-touch-callout:none}.appt .name{font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.appt.care .name{color:var(--care)}.appt.bundle .name{color:var(--red)}.sectiongap td{height:20px;background:#173a58}.pmhead th{border-top:5px solid var(--blue)}
+.notice{background:#eef8ff;border-left:4px solid var(--blue);border-radius:11px;padding:10px 12px;margin:9px 0}.shiftrow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px;border-bottom:1px solid #edf2f6}.shiftrow select{padding:8px;border:1px solid #d4e1eb;border-radius:10px}
+.pop{display:none;position:fixed;z-index:120;width:270px;background:#fff;border:1px solid #cfe0eb;border-radius:18px;padding:12px;box-shadow:0 18px 55px #17324b38}.pop.show{display:block}.pop h3{margin:0 0 3px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}.grid button{padding:11px 6px;border:1px solid #dce6ee;border-radius:11px;background:#f8fbfd;font-weight:850}.grid .yellow{background:var(--yellow)}
+.modalbg{display:none;position:fixed;inset:0;background:#10253699;z-index:150;align-items:center;justify-content:center;padding:15px}.modalbg.show{display:flex}.modal{width:min(480px,100%);max-height:85vh;overflow:auto;background:#fff;border-radius:22px;padding:18px}
+.dragghost{position:fixed;z-index:200;pointer-events:none;opacity:.9;transform:translate(-50%,-50%);width:190px}
+@media(max-width:850px){.workspace{grid-template-columns:1fr}.side{position:relative}.plist{grid-template-columns:repeat(2,minmax(0,1fr));max-height:280px}}
+</style>
+<style>
+body{background:radial-gradient(circle at 15% 0%,rgba(64,196,233,.14),transparent 28rem),linear-gradient(180deg,#f9fdff,#eef8fd 55%,#f8fcff)}
+.logo{box-shadow:0 0 0 7px #eaf5ff,0 0 32px rgba(20,120,232,.25)!important}
+.shiftdeck{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:14px}
+.shiftcell{position:relative;min-height:108px;border:1px solid #cfe1ed;border-radius:18px;background:linear-gradient(145deg,#fff,#f2faff);display:grid;place-items:center;padding:10px;overflow:hidden;cursor:crosshair;user-select:none;-webkit-user-select:none;touch-action:none;box-shadow:inset 0 1px #fff,0 8px 22px #176bd40b}
+.shiftcell:before{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 25%,rgba(64,196,233,.09),transparent 75%);pointer-events:none}
+.shiftpt{position:absolute;top:8px;left:10px;font-size:12px;font-weight:950;color:#577187}
+.shiftmark{font-size:29px;font-weight:1000}.shiftmark.full{font-size:42px;color:#101820}.shiftmark.half{font-size:44px;color:#101820;line-height:1}.shiftmark.code{color:#0c67bd;text-shadow:0 0 18px rgba(20,120,232,.22)}
+.shifthint{position:absolute;bottom:7px;font-size:10px;color:#8aa0b0}
+.radial{display:none;position:fixed;z-index:500;width:260px;height:260px;transform:translate(-50%,-50%) scale(.62);opacity:0;pointer-events:none;transition:transform .18s cubic-bezier(.2,.9,.25,1.18),opacity .15s ease}
+.radial.show{display:block;transform:translate(-50%,-50%) scale(1);opacity:1}
+.radial-ring{position:absolute;inset:17px;border-radius:50%;border:1px solid rgba(50,177,241,.35);box-shadow:inset 0 0 35px rgba(20,120,232,.10),0 0 45px rgba(20,120,232,.13)}
+.radial-core{position:absolute;left:50%;top:50%;width:82px;height:82px;transform:translate(-50%,-50%);border-radius:50%;background:rgba(7,32,54,.95);border:1px solid rgba(111,218,255,.65);box-shadow:0 0 28px rgba(43,182,255,.45),inset 0 0 22px rgba(40,173,255,.16);display:grid;place-items:center;color:#fff;text-align:center;font-weight:950;z-index:5}
+.radial-core small{display:block;font-size:9px;color:#8edcff}
+.wedge{--a:0deg;position:absolute;left:50%;top:50%;width:78px;height:54px;margin-left:-39px;margin-top:-27px;transform:rotate(var(--a)) translateY(-92px) rotate(calc(-1 * var(--a)));border-radius:17px;background:rgba(242,251,255,.97);border:1px solid rgba(71,180,239,.55);box-shadow:0 7px 18px rgba(11,78,120,.16);display:grid;place-items:center;font-weight:1000;transition:transform .12s ease,background .12s ease,box-shadow .12s ease,color .12s ease}
+.wedge.active{transform:rotate(var(--a)) translateY(-108px) rotate(calc(-1 * var(--a))) scale(1.1);background:#e6f8ff;color:#006ed0;box-shadow:0 0 28px rgba(29,175,255,.7),0 10px 25px rgba(11,78,120,.24)}
+.wedge.dark{background:#17232d;color:#fff}.wedge.dark.active{background:#203b50;color:#91e6ff}
+</style>
+</head><body><div class="wrap">
+<div class="top"><div class="brand"><div class="logo">OZ</div><div>柴田屋整形外科<br><span class="muted">OZ STAFF SYSTEM v1.7 FUTURE COMPLETE</span></div></div><div class="tabs"><button class="btn tab on" data-tab="board" onclick="showTab('board')">予約表</button><button class="btn tab" data-tab="shift" onclick="showTab('shift')">シフト表</button></div></div>
+<div class="notice">全PT横並びの予約表です。検索した患者カードを希望枠へドラッグして予約できます。予約済み患者も別枠へドラッグ移動できます。各20分枠のタップ操作もそのまま利用できます。</div>
+<section id="boardview"><div class="workspace"><aside class="card side"><h3 style="margin-top:0">患者検索</h3><input id="search" class="search" inputmode="search" placeholder="患者名 / 患者番号" oninput="renderPatients()"><div id="searchcount" class="muted" style="margin-top:7px"></div><div id="plist" class="plist"></div></aside><main><div class="boardwrap"><table class="board" id="board"></table></div></main></div></section>
+<section id="shiftview" style="display:none"><div class="card"><div class="top"><div><h2 style="margin:0">10月1日（木）シフト</h2><div class="muted">長押し → 方向へフリック → 離して確定。PCは左クリック長押し→ドラッグ→離す。</div></div><div class="muted">■ 全休　◤ 午前休　◢ 午後休</div></div><div id="shiftdeck" class="shiftdeck"></div></div></section>
+</div>
+<div id="slotpop" class="pop"><h3 id="poptitle"></h3><div id="popstate" class="muted"></div><div class="grid"><button onclick="openPatientPicker()">＋患者予約</button><button onclick="slotAct('normal')">通常</button><button class="yellow" onclick="slotAct('phys')">物療</button><button onclick="slotAct('closed')">閉鎖</button><button onclick="slotAct('base')">シフト設定へ</button><button onclick="cancelBooking()">予約取消</button></div></div>
+<div id="patientmodal" class="modalbg" onclick="if(event.target===this)closePicker()"><div class="modal"><h3 id="picktitle">患者を予約</h3><input id="psearch" class="search" inputmode="search" placeholder="患者名 / 患者番号" oninput="renderPicker()"><div id="picker" style="display:grid;gap:7px;margin-top:10px"></div></div></div>
+
+<div id="radial" class="radial">
+<div class="radial-ring"></div><div id="radialcore" class="radial-core"><div>選択<small>FLICK</small></div></div>
+<div class="wedge" data-v="normal" style="--a:0deg">通常</div>
+<div class="wedge" data-v="730" style="--a:45deg">730</div>
+<div class="wedge" data-v="715" style="--a:90deg">715</div>
+<div class="wedge" data-v="700" style="--a:135deg">700</div>
+<div class="wedge" data-v="600" style="--a:180deg">600</div>
+<div class="wedge dark" data-v="pmoff" style="--a:225deg">◢</div>
+<div class="wedge dark" data-v="full" style="--a:270deg">■</div>
+<div class="wedge dark" data-v="amoff" style="--a:315deg">◤</div>
+</div>
+<script>
+const STAFF=["本院","山口","竹谷","赤尾","中西","釆野","増田","都築","伊藤","長谷川","山梨","松田"], AM=["09:00","09:20","09:40","10:00","10:20","10:40","11:00","11:20","11:40","12:00"], PM=["15:00","15:20","15:40","16:00","16:20","16:40","17:00","17:20","17:40","18:00","18:20","18:40","19:00"], PATIENTS=[{"id":"1","name":"佐藤 太郎","t":"general"},{"id":"2","name":"鈴木 直子","t":"care"},{"id":"3","name":"高橋 誠","t":"general"},{"id":"4","name":"田中 花子","t":"general"},{"id":"5","name":"伊藤 大輔","t":"bundle"},{"id":"6","name":"渡辺 由美","t":"general"},{"id":"7","name":"山本 一郎","t":"general"},{"id":"8","name":"中村 陽子","t":"care"},{"id":"9","name":"小林 亮","t":"general"},{"id":"10","name":"加藤 美咲","t":"general"},{"id":"11","name":"吉田 拓海","t":"general"},{"id":"12","name":"山田 京子","t":"care"},{"id":"13","name":"松本 健太","t":"general"},{"id":"14","name":"井上 恵","t":"general"},{"id":"15","name":"木村 浩二","t":"bundle"},{"id":"16","name":"林 和子","t":"general"},{"id":"17","name":"清水 悠斗","t":"general"},{"id":"18","name":"山口 麻衣","t":"care"},{"id":"19","name":"森 翔太","t":"general"},{"id":"20","name":"池田 愛","t":"general"},{"id":"21","name":"佐藤 太郎","t":"general"},{"id":"22","name":"鈴木 直子","t":"care"},{"id":"23","name":"高橋 誠","t":"general"},{"id":"24","name":"田中 花子","t":"general"},{"id":"25","name":"伊藤 大輔","t":"bundle"},{"id":"26","name":"渡辺 由美","t":"general"},{"id":"27","name":"山本 一郎","t":"general"},{"id":"28","name":"中村 陽子","t":"care"},{"id":"29","name":"小林 亮","t":"general"},{"id":"30","name":"加藤 美咲","t":"general"},{"id":"31","name":"吉田 拓海","t":"general"},{"id":"32","name":"山田 京子","t":"care"},{"id":"33","name":"松本 健太","t":"general"},{"id":"34","name":"井上 恵","t":"general"},{"id":"35","name":"木村 浩二","t":"bundle"},{"id":"36","name":"林 和子","t":"general"},{"id":"37","name":"清水 悠斗","t":"general"},{"id":"38","name":"山口 麻衣","t":"care"},{"id":"39","name":"森 翔太","t":"general"},{"id":"40","name":"池田 愛","t":"general"},{"id":"41","name":"佐藤 太郎","t":"general"},{"id":"42","name":"鈴木 直子","t":"care"},{"id":"43","name":"高橋 誠","t":"general"},{"id":"44","name":"田中 花子","t":"general"},{"id":"45","name":"伊藤 大輔","t":"bundle"},{"id":"46","name":"渡辺 由美","t":"general"},{"id":"47","name":"山本 一郎","t":"general"},{"id":"48","name":"中村 陽子","t":"care"},{"id":"49","name":"小林 亮","t":"general"},{"id":"50","name":"加藤 美咲","t":"general"},{"id":"51","name":"吉田 拓海","t":"general"},{"id":"52","name":"山田 京子","t":"care"},{"id":"53","name":"松本 健太","t":"general"},{"id":"54","name":"井上 恵","t":"general"},{"id":"55","name":"木村 浩二","t":"bundle"},{"id":"56","name":"林 和子","t":"general"},{"id":"57","name":"清水 悠斗","t":"general"},{"id":"58","name":"山口 麻衣","t":"care"},{"id":"59","name":"森 翔太","t":"general"},{"id":"60","name":"池田 愛","t":"general"},{"id":"61","name":"佐藤 太郎","t":"general"},{"id":"62","name":"鈴木 直子","t":"care"},{"id":"63","name":"高橋 誠","t":"general"},{"id":"64","name":"田中 花子","t":"general"},{"id":"65","name":"伊藤 大輔","t":"bundle"},{"id":"66","name":"渡辺 由美","t":"general"},{"id":"67","name":"山本 一郎","t":"general"},{"id":"68","name":"中村 陽子","t":"care"},{"id":"69","name":"小林 亮","t":"general"},{"id":"70","name":"加藤 美咲","t":"general"},{"id":"71","name":"吉田 拓海","t":"general"},{"id":"72","name":"山田 京子","t":"care"},{"id":"73","name":"松本 健太","t":"general"},{"id":"74","name":"井上 恵","t":"general"},{"id":"75","name":"木村 浩二","t":"bundle"},{"id":"76","name":"林 和子","t":"general"},{"id":"77","name":"清水 悠斗","t":"general"},{"id":"78","name":"山口 麻衣","t":"care"},{"id":"79","name":"森 翔太","t":"general"},{"id":"80","name":"池田 愛","t":"general"},{"id":"81","name":"佐藤 太郎","t":"general"},{"id":"82","name":"鈴木 直子","t":"care"},{"id":"83","name":"高橋 誠","t":"general"},{"id":"84","name":"田中 花子","t":"general"},{"id":"85","name":"伊藤 大輔","t":"bundle"},{"id":"86","name":"渡辺 由美","t":"general"},{"id":"87","name":"山本 一郎","t":"general"},{"id":"88","name":"中村 陽子","t":"care"},{"id":"89","name":"小林 亮","t":"general"},{"id":"90","name":"加藤 美咲","t":"general"},{"id":"91","name":"吉田 拓海","t":"general"},{"id":"92","name":"山田 京子","t":"care"},{"id":"93","name":"松本 健太","t":"general"},{"id":"94","name":"井上 恵","t":"general"},{"id":"95","name":"木村 浩二","t":"bundle"},{"id":"96","name":"林 和子","t":"general"},{"id":"97","name":"清水 悠斗","t":"general"},{"id":"98","name":"山口 麻衣","t":"care"},{"id":"99","name":"森 翔太","t":"general"},{"id":"100","name":"池田 愛","t":"general"},{"id":"101","name":"佐藤 太郎","t":"general"},{"id":"102","name":"鈴木 直子","t":"care"},{"id":"103","name":"高橋 誠","t":"general"},{"id":"104","name":"田中 花子","t":"general"},{"id":"105","name":"伊藤 大輔","t":"bundle"},{"id":"106","name":"渡辺 由美","t":"general"},{"id":"107","name":"山本 一郎","t":"general"},{"id":"108","name":"中村 陽子","t":"care"},{"id":"109","name":"小林 亮","t":"general"},{"id":"110","name":"加藤 美咲","t":"general"},{"id":"111","name":"吉田 拓海","t":"general"},{"id":"112","name":"山田 京子","t":"care"},{"id":"113","name":"松本 健太","t":"general"},{"id":"114","name":"井上 恵","t":"general"},{"id":"115","name":"木村 浩二","t":"bundle"},{"id":"116","name":"林 和子","t":"general"},{"id":"117","name":"清水 悠斗","t":"general"},{"id":"118","name":"山口 麻衣","t":"care"},{"id":"119","name":"森 翔太","t":"general"},{"id":"120","name":"池田 愛","t":"general"},{"id":"121","name":"佐藤 太郎","t":"general"},{"id":"122","name":"鈴木 直子","t":"care"},{"id":"123","name":"高橋 誠","t":"general"},{"id":"124","name":"田中 花子","t":"general"},{"id":"125","name":"伊藤 大輔","t":"bundle"},{"id":"126","name":"渡辺 由美","t":"general"},{"id":"127","name":"山本 一郎","t":"general"},{"id":"128","name":"中村 陽子","t":"care"},{"id":"129","name":"小林 亮","t":"general"},{"id":"130","name":"加藤 美咲","t":"general"},{"id":"131","name":"吉田 拓海","t":"general"},{"id":"132","name":"山田 京子","t":"care"},{"id":"133","name":"松本 健太","t":"general"},{"id":"134","name":"井上 恵","t":"general"},{"id":"135","name":"木村 浩二","t":"bundle"},{"id":"136","name":"林 和子","t":"general"},{"id":"137","name":"清水 悠斗","t":"general"},{"id":"138","name":"山口 麻衣","t":"care"},{"id":"139","name":"森 翔太","t":"general"},{"id":"140","name":"池田 愛","t":"general"},{"id":"141","name":"佐藤 太郎","t":"general"},{"id":"142","name":"鈴木 直子","t":"care"},{"id":"143","name":"高橋 誠","t":"general"},{"id":"144","name":"田中 花子","t":"general"},{"id":"145","name":"伊藤 大輔","t":"bundle"},{"id":"146","name":"渡辺 由美","t":"general"},{"id":"147","name":"山本 一郎","t":"general"},{"id":"148","name":"中村 陽子","t":"care"},{"id":"149","name":"小林 亮","t":"general"},{"id":"150","name":"加藤 美咲","t":"general"},{"id":"151","name":"吉田 拓海","t":"general"},{"id":"152","name":"山田 京子","t":"care"},{"id":"153","name":"松本 健太","t":"general"},{"id":"154","name":"井上 恵","t":"general"},{"id":"155","name":"木村 浩二","t":"bundle"},{"id":"156","name":"林 和子","t":"general"},{"id":"157","name":"清水 悠斗","t":"general"},{"id":"158","name":"山口 麻衣","t":"care"},{"id":"159","name":"森 翔太","t":"general"},{"id":"160","name":"池田 愛","t":"general"},{"id":"161","name":"佐藤 太郎","t":"general"},{"id":"162","name":"鈴木 直子","t":"care"},{"id":"163","name":"高橋 誠","t":"general"},{"id":"164","name":"田中 花子","t":"general"},{"id":"165","name":"伊藤 大輔","t":"bundle"},{"id":"166","name":"渡辺 由美","t":"general"},{"id":"167","name":"山本 一郎","t":"general"},{"id":"168","name":"中村 陽子","t":"care"},{"id":"169","name":"小林 亮","t":"general"},{"id":"170","name":"加藤 美咲","t":"general"},{"id":"171","name":"吉田 拓海","t":"general"},{"id":"172","name":"山田 京子","t":"care"},{"id":"173","name":"松本 健太","t":"general"},{"id":"174","name":"井上 恵","t":"general"},{"id":"175","name":"木村 浩二","t":"bundle"},{"id":"176","name":"林 和子","t":"general"},{"id":"177","name":"清水 悠斗","t":"general"},{"id":"178","name":"山口 麻衣","t":"care"},{"id":"179","name":"森 翔太","t":"general"},{"id":"180","name":"池田 愛","t":"general"},{"id":"181","name":"佐藤 太郎","t":"general"},{"id":"182","name":"鈴木 直子","t":"care"},{"id":"183","name":"高橋 誠","t":"general"},{"id":"184","name":"田中 花子","t":"general"},{"id":"185","name":"伊藤 大輔","t":"bundle"},{"id":"186","name":"渡辺 由美","t":"general"},{"id":"187","name":"山本 一郎","t":"general"},{"id":"188","name":"中村 陽子","t":"care"},{"id":"189","name":"小林 亮","t":"general"},{"id":"190","name":"加藤 美咲","t":"general"},{"id":"191","name":"吉田 拓海","t":"general"},{"id":"192","name":"山田 京子","t":"care"},{"id":"193","name":"松本 健太","t":"general"},{"id":"194","name":"井上 恵","t":"general"},{"id":"195","name":"木村 浩二","t":"bundle"},{"id":"196","name":"林 和子","t":"general"},{"id":"197","name":"清水 悠斗","t":"general"},{"id":"198","name":"山口 麻衣","t":"care"},{"id":"199","name":"森 翔太","t":"general"},{"id":"200","name":"池田 愛","t":"general"},{"id":"10012","name":"天塚 文隆","t":"general"},{"id":"10021","name":"加藤 花子","t":"bundle"},{"id":"10046","name":"山口 一郎","t":"care"},{"id":"10056","name":"伊藤 美咲","t":"general"}];
+const KEY="shibataya_v17_future_complete";
+function fresh(){const shift={};STAFF.forEach(s=>shift[s]="normal");shift["本院"]="phys";shift["松田"]="full";shift["山梨"]="pmoff";shift["増田"]="600";return{shift,override:{},slotOverride:{},slots:{}}}
+let D;try{D=JSON.parse(localStorage.getItem(KEY)||"null")||fresh()}catch(e){D=fresh()}D.shift=D.shift||fresh().shift;D.override=D.override||{};D.slotOverride=D.slotOverride||{};D.slots=D.slots||{};
+let edit=null,drag=null,ghost=null;
+function save(){localStorage.setItem(KEY,JSON.stringify(D))}
+function norm(v){return String(v??"").trim().toLowerCase().replace(/\s+/g,"")}
+function searchPatients(q){const raw=String(q??"").trim();if(!raw)return[];if(/^\d+$/.test(raw)){const p=PATIENTS.find(x=>String(x.id)===raw);return p?[p]:[]}const n=norm(raw);return PATIENTS.filter(p=>norm(p.name).includes(n)).slice(0,100)}
+function label(t){return t==="care"?"介護":t==="bundle"?"まとめ":"一般"}
+function effective(s){return D.override[s]||D.shift[s]||"normal"}
+function baseState(s,t){const x=effective(s),h=parseInt(t,10);if(x==="full"||(x==="amoff"&&h<15)||(x==="pmoff"&&h>=15)||(x==="600"&&h>=18))return"closed";if(x==="phys"||(x==="physam"&&h<15)||(x==="physpm"&&h>=15))return"phys";return"normal"}
+function state(s,t,k){return D.slotOverride[k]||baseState(s,t)}
+function header(cls=""){return `<tr class="${cls}">${STAFF.slice(0,5).map(s=>`<th class="staffhead">${s}</th>`).join("")}<th class="timecol staffhead">時間</th>${STAFF.slice(5).map(s=>`<th class="staffhead">${s}</th>`).join("")}</tr>`}
+function row(t){let cells=STAFF.map(s=>slotCell(s,t));return `<tr>${cells.slice(0,5).join("")}<td class="timecol">${t}</td>${cells.slice(5).join("")}</tr>`}
+function slotCell(s,t){const k=t+"|"+s,st=state(s,t,k),x=D.slots[k],man=Object.prototype.hasOwnProperty.call(D.slotOverride,k);let body="";if(st==="closed")body='<div class="muted">閉鎖</div>';else if(st==="phys")body='<div class="muted">物療</div>';else if(x)body=`<div class="appt ${x.t}" data-src="slot" data-key="${k}" data-id="${x.id}"><div class="name">${x.name}</div><div class="muted">#${x.id} ${label(x.t)}</div></div>`;return `<td class="slot ${st==="closed"?"closed":st==="phys"?"phys":""} ${man?"manual":""}" data-key="${k}" data-staff="${s}" data-time="${t}" onclick="openSlot(event,this)">${body}</td>`}
+function renderBoard(){document.getElementById("board").innerHTML=`<tbody>${header()}${AM.map(row).join("")}<tr class="sectiongap"><td colspan="13"></td></tr>${header("pmhead")}${PM.map(row).join("")}</tbody>`;bindDrag()}
+function renderPatients(){const q=document.getElementById("search").value,m=searchPatients(q);document.getElementById("searchcount").textContent=q.trim()?`検索結果 ${m.length}件`:`登録患者 ${PATIENTS.length}名`;document.getElementById("plist").innerHTML=q.trim()?(m.length?m.map(p=>`<div class="pcard ${p.t}" data-src="patient" data-id="${p.id}"><b><span class="dot"></span>${p.name}</b><div class="muted">#${p.id} / ${label(p.t)}</div></div>`).join(""):'<div class="muted">該当なし</div>'):'<div class="muted">患者番号または氏名を入力してください。</div>';bindDrag()}
+function openSlot(e,td){if(e.target.closest(".appt"))return;edit={k:td.dataset.key,s:td.dataset.staff,t:td.dataset.time};const pop=document.getElementById("slotpop");document.getElementById("poptitle").textContent=edit.s+" "+edit.t;document.getElementById("popstate").textContent=`シフト由来：${stateLabel(baseState(edit.s,edit.t))} ／ 現在：${stateLabel(state(edit.s,edit.t,edit.k))}`;pop.classList.add("show");let r=td.getBoundingClientRect(),w=270,x=Math.min(window.innerWidth-w-8,Math.max(8,r.left)),y=r.bottom+6;if(y+245>window.innerHeight)y=Math.max(8,r.top-245);pop.style.left=x+"px";pop.style.top=y+"px"}
+function stateLabel(x){return x==="closed"?"閉鎖":x==="phys"?"物療":"通常"}
+function closePop(){document.getElementById("slotpop").classList.remove("show")}
+document.addEventListener("pointerdown",e=>{if(!e.target.closest("#slotpop")&&!e.target.closest(".slot"))closePop()})
+function slotAct(v){if(!edit)return;if(v==="base")delete D.slotOverride[edit.k];else D.slotOverride[edit.k]=v;save();closePop();renderBoard()}
+function cancelBooking(){if(!edit)return;delete D.slots[edit.k];save();closePop();renderBoard()}
+function openPatientPicker(){if(!edit)return;closePop();document.getElementById("psearch").value="";document.getElementById("picker").innerHTML='<div class="muted">患者番号または氏名を入力してください。</div>';document.getElementById("patientmodal").classList.add("show");setTimeout(()=>document.getElementById("psearch").focus(),50)}
+function closePicker(){document.getElementById("patientmodal").classList.remove("show")}
+function renderPicker(){const m=searchPatients(document.getElementById("psearch").value);document.getElementById("picker").innerHTML=m.length?m.map(p=>`<div class="result" onclick="book('${p.id}')"><b>${p.name}</b> <span class="muted">${label(p.t)}</span><div class="muted">患者番号 ${p.id}</div></div>`).join(""):'<div class="muted">該当する患者が見つかりません。</div>'}
+function book(id){const p=PATIENTS.find(x=>x.id===id);if(!p||!edit)return;D.slots[edit.k]={id:p.id,name:p.name,t:p.t};D.slotOverride[edit.k]="normal";save();closePicker();renderBoard()}
+function desc(x){return{normal:"通常",full:"全日休み",amoff:"午前休み",pmoff:"午後休み","730":"730","715":"715","700":"700","600":"600（18時上がり）",phys:"終日物療",physam:"午前のみ物療",physpm:"午後のみ物療"}[x]||x}
+function shiftVisual(v){if(v==="full")return'<span class="shiftmark full">■</span>';if(v==="amoff")return'<span class="shiftmark half">◤</span>';if(v==="pmoff")return'<span class="shiftmark half">◢</span>';if(["730","715","700","600"].includes(v))return`<span class="shiftmark code">${v}</span>`;return`<span class="shiftmark">${desc(v)}</span>`}
+function renderShift(){document.getElementById("shiftdeck").innerHTML=STAFF.map(s=>{const v=D.shift[s]||"normal";return`<div class="shiftcell" data-staff="${s}"><div class="shiftpt">${s}</div>${shiftVisual(v)}<div class="shifthint">長押ししてフリック</div></div>`}).join("");bindShiftRadial()}
+function setShift(s,v){D.shift[s]=v;delete D.override[s];save();renderShift();renderBoard()}
+let radialSession=null,radialTimer=null,radialChoice=null;
+const radialItems=["normal","730","715","700","600","pmoff","full","amoff"];
+function bindShiftRadial(){document.querySelectorAll(".shiftcell").forEach(el=>{el.addEventListener("pointerdown",radialDown,{passive:false});el.addEventListener("contextmenu",e=>e.preventDefault())})}
+function radialDown(e){if(e.pointerType==="mouse"&&e.button!==0)return;e.preventDefault();const el=e.currentTarget;radialSession={staff:el.dataset.staff,x:e.clientX,y:e.clientY,opened:false};radialTimer=setTimeout(()=>openRadial(radialSession.x,radialSession.y),180);document.addEventListener("pointermove",radialMove,{passive:false});document.addEventListener("pointerup",radialUp,{once:true,passive:false});document.addEventListener("pointercancel",radialCancel,{once:true,passive:false})}
+function openRadial(x,y){if(!radialSession)return;radialSession.opened=true;const r=document.getElementById("radial"),mg=140;x=Math.max(mg,Math.min(innerWidth-mg,x));y=Math.max(mg,Math.min(innerHeight-mg,y));radialSession.cx=x;radialSession.cy=y;r.style.left=x+"px";r.style.top=y+"px";r.classList.add("show");radialChoice=null;updateRadial(null)}
+function radialMove(e){if(!radialSession)return;e.preventDefault();if(!radialSession.opened){if(Math.hypot(e.clientX-radialSession.x,e.clientY-radialSession.y)>16){clearTimeout(radialTimer);openRadial(radialSession.x,radialSession.y)}else return}const dx=e.clientX-radialSession.cx,dy=e.clientY-radialSession.cy,dist=Math.hypot(dx,dy);if(dist<38){radialChoice=null;updateRadial(null);return}const deg=(Math.atan2(dx,-dy)*180/Math.PI+360)%360,idx=Math.round(deg/45)%8;radialChoice=radialItems[idx];updateRadial(radialChoice)}
+function updateRadial(v){document.querySelectorAll("#radial .wedge").forEach(w=>w.classList.toggle("active",w.dataset.v===v));document.getElementById("radialcore").innerHTML=v?`<div>${shiftVisual(v)}<small>${desc(v)}</small></div>`:'<div>選択<small>FLICK</small></div>'}
+function radialUp(e){clearTimeout(radialTimer);document.removeEventListener("pointermove",radialMove);if(radialSession&&radialSession.opened&&radialChoice)setShift(radialSession.staff,radialChoice);closeRadial()}
+function radialCancel(){clearTimeout(radialTimer);document.removeEventListener("pointermove",radialMove);closeRadial()}
+function closeRadial(){document.getElementById("radial").classList.remove("show");radialSession=null;radialChoice=null}
+function showTab(x){document.getElementById("boardview").style.display=x==="board"?"block":"none";document.getElementById("shiftview").style.display=x==="shift"?"block":"none";document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("on",b.dataset.tab===x));if(x==="shift")renderShift()}
+function bindDrag(){
+  document.querySelectorAll(".pcard,.appt").forEach(el=>{
+    if(el.dataset.bound)return;
+    el.dataset.bound="1";
+    el.addEventListener("pointerdown",startDrag,{passive:false});
+    el.addEventListener("dragstart",e=>e.preventDefault());
+  })
+}
+function startDrag(e){
+  if(e.pointerType==="mouse" && e.button!==0)return;
+  e.preventDefault();
+  e.stopPropagation();
+  closePop();
+  const el=e.currentTarget;
+  drag={src:el.dataset.src,id:el.dataset.id,from:el.dataset.key||null,pointerId:e.pointerId};
+  try{el.setPointerCapture(e.pointerId)}catch(_){}
+  ghost=el.cloneNode(true);
+  ghost.classList.add("dragghost");
+  ghost.removeAttribute("onclick");
+  document.body.appendChild(ghost);
+  moveGhost(e);
+  document.addEventListener("pointermove",dragMove,{passive:false});
+  document.addEventListener("pointerup",dragEnd,{once:true,passive:false});
+  document.addEventListener("pointercancel",dragCancel,{once:true,passive:false});
+}
+function moveGhost(e){
+  if(ghost){
+    ghost.style.left=e.clientX+"px";
+    ghost.style.top=e.clientY+"px";
+  }
+}
+function targetSlotAt(x,y){
+  const el=document.elementFromPoint(x,y);
+  return el&&el.closest?el.closest(".slot"):null;
+}
+function clearDrop(){
+  document.querySelectorAll(".slot.drop").forEach(x=>x.classList.remove("drop"));
+}
+function dragMove(e){
+  if(!drag)return;
+  e.preventDefault();
+  moveGhost(e);
+  clearDrop();
+  const s=targetSlotAt(e.clientX,e.clientY);
+  if(s && state(s.dataset.staff,s.dataset.time,s.dataset.key)==="normal"){
+    s.classList.add("drop");
+  }
+}
+function finishDragVisual(){
+  clearDrop();
+  if(ghost)ghost.remove();
+  ghost=null;
+}
+function dragCancel(e){
+  document.removeEventListener("pointermove",dragMove);
+  finishDragVisual();
+  drag=null;
+}
+function dragEnd(e){
+  if(!drag)return;
+  e.preventDefault();
+  document.removeEventListener("pointermove",dragMove);
+  const s=targetSlotAt(e.clientX,e.clientY);
+  const currentDrag=drag;
+  finishDragVisual();
+  drag=currentDrag;
+  if(s){
+    const st=state(s.dataset.staff,s.dataset.time,s.dataset.key);
+    if(st==="normal")dropTo(s.dataset.key);
+    else if(st==="closed")alert("この枠は閉鎖中のため予約できません。");
+    else if(st==="phys")alert("この枠は物療枠のため直接予約できません。");
+  }
+  drag=null;
+}
+function dropTo(k){
+  if(!drag)return;
+  if(drag.src==="slot" && drag.from===k)return;
+  let item;
+  if(drag.src==="patient"){
+    const p=PATIENTS.find(x=>x.id===drag.id);
+    if(!p)return;
+    item={id:p.id,name:p.name,t:p.t};
+  }else{
+    item=D.slots[drag.from];
+  }
+  if(!item)return;
+
+  if(D.slots[k] && k!==drag.from && !confirm("予約済みです。入れ替えますか？"))return;
+
+  if(drag.src==="slot" && drag.from!==k){
+    const old=D.slots[k];
+    delete D.slots[drag.from];
+    D.slots[k]=item;
+    if(old)D.slots[drag.from]=old;
+  }else{
+    D.slots[k]=item;
+  }
+  save();
+  renderBoard();
+}renderBoard()
+renderBoard();renderPatients();renderShift();
+</script></body></html>
