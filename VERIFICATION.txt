@@ -1,18 +1,94 @@
-Shibataya OZ v2.0 verification
+柴田屋OZ v2.0 MONTHLY 検証記録
+状態：確認用ZIP / 未検証項目あり
 
-PASS  index fixed
-PASS  patient search
-PASS  drag patient
-PASS  drag fixed size
-PASS  patient settings search
-PASS  patient settings booked
-PASS  cancel booking
-PASS  20min slot
-PASS  shift codes
-PASS  shift symbols
-PASS  radial hidden
-PASS  bright UI
-PASS  mobile
-PASS  no absolute assets
-PASS  javascript syntax
-PASS  golden functions retained
+処理テスト 58項目 PASS（Node VM + DOMスタブ）
+JavaScript構文 node --check：PASS
+v1.9候補の既存関数 55個：すべて維持
+そのうち本文不変 48個：一致
+患者検索・予約・取消・移動・区分/メモ・枠上書き関数本文：変更なし
+変更は日別保存、月間シフト表示、シフト日付指定、円形入力のdate/pan制御、HTML/CSSに限定
+HTML ID重複なし・必須UI・外部依存なし・index.html/.nojekyll存在：PASS
+CSSのsticky列/行と横スクロール指定：コード確認済み（描画は未検証）
+新スキーマと旧キー保持：処理テストPASS
+
+PASS 完全一致検索 1
+PASS 完全一致検索 100
+PASS 完全一致検索 200
+PASS 完全一致検索 10046
+PASS 氏名部分一致・空白正規化
+PASS スタッフ・時間・患者データ維持
+PASS 全PT横並び・中央時間・午後見出し
+PASS 検索カードからの予約
+PASS 予約移動・元枠消去
+PASS 予約入れ替え拒否・承認
+PASS 患者予約上書き拒否・承認
+PASS 閉鎖→通常化を拒否したら予約なし
+PASS 閉鎖→通常化承認して予約
+PASS 患者設定・メモ保存・マスター不変
+PASS 予約移動メニュー経由でメモ保持
+PASS 予約解除
+PASS 枠設定 normal
+PASS 枠設定 closed
+PASS 枠設定 phys
+PASS 枠設定 base
+PASS シフト連携 full
+PASS シフト連携 amoff
+PASS シフト連携 pmoff
+PASS シフト連携 600
+PASS 勤務コード 730 は推測閉鎖なし
+PASS 勤務コード 715 は推測閉鎖なし
+PASS 勤務コード 700 は推測閉鎖なし
+PASS 物療系シフト
+PASS 手動上書き優先・シフトへ戻す
+PASS シフト閉鎖後も予約表示・要確認
+PASS 予約あり枠の閉鎖確認・予約保持
+PASS 日付別保存構造・旧キー保持
+PASS 月間シフト12人×31日・大きな記号
+PASS mouse PointerEvent 円形8方向判定・確定・終了
+PASS touch PointerEvent 円形8方向判定・確定・終了
+PASS 円形キャンセル・中心離し・短押し・リスナー除去
+PASS 患者カード短タップでドラッグ終了・リスナー除去
+PASS 保存失敗時に表示・通知
+PASS HTML文字列のエスケープ
+PASS 2月28日・閏年29日・30日・31日の生成
+PASS 日付曜日表示・土日色分け・日曜閉鎖を推測しない
+PASS 月送り年跨ぎ・予約表示日は独立
+PASS 今月へ戻る・東京日付
+PASS 日付ヘッダー→該当日予約表示
+PASS 該当日全休・午前休・午後休・600→予約反映
+PASS 別日のシフト変更は表示日の予約状態を変えない
+PASS 日付別予約・患者設定・手動上書きを分離
+PASS 対象セルの日付に円形入力を保存
+PASS セル上の横スワイプはスクロール・勤務変更なし
+PASS 前日/翌日年跨ぎ・無効日付拒否
+PASS 予約日変更でメニュー・移動状態を終了
+PASS 月表示で未入力全日データを大量作成しない
+PASS 月セル数/ヘッダー数/スタッフ順固定
+PASS 旧保存データを10月1日へ一度移行・原データ保持
+PASS 月間保存を再ロードして日別状態を復元
+PASS 不正保存データを自動上書きしない
+PASS 旧保存形式不正でも旧データを保護
+PASS 長押し終了後に単一メニューを消去・pending解除
+
+未実施：ブラウザ描画、sticky実動作、PC実マウス、スマホ実Touch/PointerEvent、長押しアニメーション、フリックの浮上/発光、横スワイプ実操作、GitHub Pages実配置。
+理由：前回ブラウザ起動で socket() Operation not permitted。実操作テスト未実施をPASSとして扱わない。
+v15/v16/v17比較・正常版Golden Master確定も未実施。
+2026年10月4日、未検証項目を明記した確認用ZIPとして納品することをユーザーが承認。完成版としては扱わない。
+
+index.html SHA256: 06e2d60c5b50b769d6f79f3daf0a48213a1ad62fbc0c3fcb1e18d8b5f22e66dd
+
+
+【今回の変更票】
+基準：shibataya_oz_v20_confirmation.zip
+基準index.html SHA256：06e2d60c5b50b769d6f79f3daf0a48213a1ad62fbc0c3fcb1e18d8b5f22e66dd
+残す：アプリ本体・全既存予約/シフト/検索/保存処理を100%同一バイトで継承。
+削除：なし。
+追加：READMEへ保護機能P01〜P15と次版更新手順、将来構想と未実装区分を追加。
+変更：VERIFICATIONへ今回の変更票を追加。
+機能追加やUI変更：今回なし（月間版は前回候補のまま）。
+確認：index.html前版とのバイト比較PASS、ZIP直下4ファイル/CRCチェックPASS。
+機能テストは前回の処理58項目を継承。実ブラウザ操作/描画/公開動作は依然未実施。
+旧v15/v16/v17比較も未実施。このZIPも確認用候補。
+GitHubへ反映したか：未反映。ユーザーがルートindex.htmlを置換する必要あり。
+既存関数一覧（欠落検査の補助。実操作確認の代替ではない）：
+fresh, validDate, dateISO, todayISO, newDay, cleanDay, ensureDay, getDay, save, norm, searchPatients, label, effective, baseState, state, header, row, slotCell, renderBoard, renderPatients, openSlot, stateLabel, closePop, slotAct, cancelBooking, openPatientPicker, closePicker, renderPicker, book, desc, shiftVisual, renderShift, setShift, bindShiftRadial, radialDown, openRadial, radialMove, updateRadial, radialUp, radialCancel, closeRadial, showTab, bindDrag, startDrag, moveGhost, targetSlotAt, clearDrop, dragMove, finishDragVisual, dragCancel, dragEnd, dropTo, safe, announce, placePop, openAppointment, openSettings, closeSettings, saveSettings, beginMove, cancelMove, completeMove, dayTitle, monthDates, dayEffective, updateDateUI, setBookingDate, moveBookingDate, todayBooking, shiftMonth, thisMonth, viewBookingDay
