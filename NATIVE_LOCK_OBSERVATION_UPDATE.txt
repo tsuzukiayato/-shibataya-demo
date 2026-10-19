@@ -1,0 +1,41 @@
+柴田屋OZ 実PostgreSQL検証・ロック観測修正（2026-10-06）
+
+対象: verification/Native/ApiChecks.cs の native_day_lock_blocks_until_release
+
+前回の実機結果
+- ブラウザ40項目はEdgeと架空データ環境でPASS。
+- PostgreSQL 18を使うWindows検証は native_day_lock_blocks_until_release でFAIL。
+- その後、Windowsのコード整合性ポリシーがビルド済み検証DLLをブロック。
+- 実PostgreSQL検証全体、復元試験、Golden Master昇格は未完了。
+
+今回の変更
+- ロック待ちの観測を pg_stat_activity.query のSQL文字列照合から、
+  pg_blocking_pids() による「検証用接続のPIDがAPI側をブロック中か」へ変更。
+- 既存の判定要件（実際にLock待機、解放前は要求未完了、解放後はHTTP 200）を維持。
+- 失敗時も自分のトランザクションを解放してから保留中の要求を待つ。
+- ロック保持、待機観測、応答の段階表示は維持。
+
+理由と限界
+前の検査は待機中のSQL本文に特定のテーブル名が含まれることを仮定していました。
+その仮定に依存しないようにしました。ただし前回FAILの直接原因は未確定です。
+修正版のWindowsビルドと実PostgreSQL実行はこの環境では未実施です。
+したがってPASSや不具合解消を宣言しません。
+
+変更していないもの
+予約表、月間シフト、患者検索、予約操作、サーバー、DBスキーマ、ブラウザテスト。
+旧レポートは当時の結果として保存しています。最新結果ではありません。
+
+扱い方
+このZIPは開発用ソース一式であり、GitHub Pagesへ置くindex.htmlの更新ではありません。
+実患者データを含めたり、公開GitHubリポジトリへ本番データを送ったりしないでください。
+Windows側でビルド済みDLLが実行制御によりブロックされる状態では、
+実行制御を無効化して再試行しないでください。承認された別のWindows検証環境が必要です。
+仮想PCの黒画面とWSL未インストールは、この修正の合否を示しません。
+
+確認すべき結果
+Windowsの承認済み環境で native_day_lock_blocks_until_release、
+API再起動、pg_dump/pg_restore、cleanupPassed を改めて確認すること。
+実スマホ、院内LAN、印刷、Excelの列マッピングは別の検証です。
+
+参照: PostgreSQL 18 pg_blocking_pids / pg_backend_pid 公式ドキュメント
+https://www.postgresql.org/docs/18/functions-info.html

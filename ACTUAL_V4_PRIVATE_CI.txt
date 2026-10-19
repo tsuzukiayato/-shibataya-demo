@@ -1,0 +1,39 @@
+OZ v4 — 非公開GitHubでの検証手順
+2026-10-07
+
+自宅WindowsがOz.Server.dllの実行を拒否したため、v4の実機操作は未完了。
+Windowsの保護設定を変更せず、非公開リポジトリで開発用ソースを検証します。
+実患者データを外部へ出す方法ではありません。
+
+1. このZIPを解凍します。
+2. GitHub Desktopで「oz-verification-private」を選択。
+3. Repository → Show in Explorerでリポジトリのフォルダーを開きます。
+4. ZIP内の中身をそのフォルダーへコピーし、同名ファイルを置換。
+   フォルダーごと一段下に追加せず、中身をルートへ配置。
+   .github/workflows/native-postgresql-18.ymlも今回更新されています。
+5. GitHub Desktopで変更一覧を確認。
+   Summaryに「Verify OZ v4 actual history」と入力してCommit。
+   続いてPush originを押します。
+6. 非公開リポジトリのGitHub画面でActionsを開きます。
+7. 「OZ v4 actual + PostgreSQL 18 verification」を選択。
+8. Run workflowで起動。結果を確認します。
+
+今回追加する検証
+- 原本UIの保護、競合通知、Gateway、iPhone接続アダプター。
+- 実績ボタン、状態表示、履歴のエスケープ、古い日付応答の破棄。
+- 001→002移行と履歴保持、キャンセル状態、移動前のPT・時刻。
+- .NETビルド、ASP.NET APIとのHTTP統合。
+- 実績履歴の認証、来院→キャンセルの枠解放、同一操作再送保護。
+- 従来の実PostgreSQL 18並行更新、復旧・バックアップ試験。
+
+成果物名は oz-v4-actual-verification-result。
+actual-v4-verification.json：Node VM/PGlite等の限定試験。
+api-integration.json：ASP.NETと単一接続PGliteのHTTP統合試験。
+native-linux-ci-results.json：Linux実PostgreSQLの検証結果。
+このワークフローはprivateリポジトリのみ実行します。
+実行環境のDB・資格情報・ログ全文は成果物として保存しません。
+結果が成功でもWindows起動、実iPhone、新版画面、院内LANは未完了です。
+公開デモの -shibataya-demo にはアップロードしません。
+
+最初はフォルダーへの置換とGitHub Desktopの変更一覧確認まで進めてください。
+失敗したら最初の赤いステップ名とエラーを送ってください。

@@ -1,0 +1,44 @@
+柴田屋OZ — 実PostgreSQL / Windows検証ランナー追加 記録
+
+区分: 完全ソース一式の開発チェックポイント。本番導入済みの完成アプリではありません。
+
+今回実施した検証
+PASS  .NET 10 Releaseビルド（警告0、エラー0）
+PASS  固定lockファイルでのローカル依存復元
+PASS  ランナー自己テスト9項目（接続先制限、実PG/物理セッション判定、
+      子プロセス引数の実往復、復元照合の変化検出、未実施項目のNOT_RUN維持等）
+PASS  LinuxでWindows専用DB検証を開始しないこと（終了コード2）
+PASS  前工程との完全比較: 既存72ファイル同一、保護対象33ソース同一、欠落0
+      既存変更はREADME.txtとdocs/NEXT_REVIEW.mdのみ。変更前もarchiveに保持。
+
+今回追加したもの
+・通常権限Windowsで新規の専用PostgreSQL 18クラスタを作る検証ランナー
+・同時予約、同一操作再送、閲覧権限、日付競合、入替競合、実績保持の検査
+・物理バックエンド2接続の判定と、日付行ロックの実待機を観測する検査
+・API再起動後の内容/操作Receipt保持の検査
+・pg_dump→空の別DB→pg_restore、15テーブルとスキーマ定義の照合
+・Windows起動補助、手順書、機密を含まない結果JSONの出力
+
+未実施（PASS扱いしません）
+NOT_RUN  Windows / PowerShell / ACL実行
+NOT_RUN  実PostgreSQL 18の起動、同時更新、Lock待機
+NOT_RUN  APIプロセス再起動後のDB保持
+NOT_RUN  pg_dump / pg_restoreによる実復元
+NOT_RUN  実ブラウザ、PC/スマホPointer操作、円形メニュー、印刷/PDF
+NOT_RUN  院内LAN、複数端末、個人認証、TLS、実患者運用
+NOT_PROMOTED  Golden Master
+
+以前の結果
+UI通し21、API39、Gateway8、起動制限5、デモ回帰58、等価性15の記録を
+すべてそのまま同梱。UI/APIのDB試験はPGliteであり、実PG同時接続の証明ではありません。
+今回はそれらの対象ソースを変更していないため、再実行せず比較で保持を確認しました。
+
+次の作業
+docs/WINDOWS_NATIVE_VERIFICATION.mdに沿ってWindows開発PCで実行し、
+native-results.jsonを確認してください。実PG/復元/再起動がPASS、cleanup=true、
+FAILなし、終了コード0を確認後、実ブラウザの受入へ進みます。
+
+公開・配布
+GitHubへのアップロードは不要です。公開サイトは変更していません。
+SDK/PostgreSQL/NuGet/Node依存とランタイムのDB・資格情報は同梱していません。
+院内本番のオフラインインストーラーではありません。

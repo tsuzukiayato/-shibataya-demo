@@ -1,0 +1,50 @@
+柴田屋OZ — ブラウザ操作検証準備 記録
+
+今回の成果
+・予約表・月間シフトのPC/タッチ操作38項目を確認するテスト一式を追加。
+・既存の中央API、架空DBを使用し、localhostの新しい検証環境を毎回作成。
+・WindowsでChrome/Edgeを使う起動補助、依存lock、手順書を同梱。
+・途中停止を全体PASSと誤認しない結果判定を追加。
+
+実施した確認
+PASS  中央API Releaseビルド（警告0、エラー0）
+PASS  検証コードJavaScript構文チェック
+PASS  Node依存lockの固定バージョン整合性
+PASS  検証環境のAPI起動・認証拒否・204名の架空患者確認（2項目）
+PASS  APIとPGliteの後片付け
+PASS  結果判定の自己テスト7項目（部分実行/失敗/後片付け未完了ではPASSにしない等）
+PASS  前工程との完全比較: 既存94ファイル同一、保護対象43ソース同一、欠落0
+      既存変更はREADME.txtとdocs/NEXT_REVIEW.mdのみ。変更前もarchiveに保持。
+
+実ブラウザ起動の状況
+前回のChromeファイルは不完全展開だったため、完全に展開し直しました。
+Chrome 154.0.8037.97のバージョン取得は成功しました。
+その後、実画面の起動はsocket() Operation not permittedで環境に拒否されました。
+ローカル通信の制限を回避していません。
+
+未実施
+NOT_RUN  PC/タッチの画面操作38項目
+NOT_RUN  Windows実機 / PowerShell起動
+NOT_RUN  実スマホ / Safari / 端末性能
+NOT_RUN  実PostgreSQL同時接続 / MVCC / バックアップ復元
+NOT_RUN  院内LAN / 複数端末 / 個人認証 / TLS / 印刷・PDF
+NOT_PROMOTED  Golden Master
+
+今回のbrowser-results.jsonはAPI起動だけの記録で、全体status=NOT_COMPLETEDです。
+操作38項目はremainingCases内でNOT_RUNとして残しています。
+これをブラウザ操作の合格として扱ってはいけません。
+
+補足
+PGliteは単一物理接続の検証用DBです。実PostgreSQLの合格判定には使いません。
+以前のUI/API/Nativeランナー等の検証記録は、そのまま同梱しています。
+対象ソースを変えていないため、前工程のテストは再実行せず比較で保持を確認しました。
+
+次の実行
+docs/BROWSER_VERIFICATION.mdを読み、Windows開発PCで
+browser-tests/Run-Browser-Verification.ps1を実行してください。
+Chromeがない場合は -Browser msedge を指定できます。
+結果JSONで40項目PASS、残り0、cleanup=PASS、終了コード0を確認します。
+実PostgreSQLの検証はverification/windows/Run-Verification.ps1で別に行います。
+
+このZIPは完全ソース一式です。GitHubへのアップロードは不要です。
+公開サイトの変更、本番インストーラー、実患者への導入は行っていません。

@@ -1,0 +1,52 @@
+柴田屋OZ / 架空データ専用・実PostgreSQL 18検証準備
+2026-10-06
+
+なぜ別の環境が必要か
+自宅Windows 11 Homeでは、署名のない検証DLLの読み込みがコード整合性ポリシーにより拒否。
+VirtualBoxのWindows 11は黒画面で進行せず、WSLは未インストール。
+通常のGitHub Windows runnerは管理者権限で動き、標準搭載PostgreSQLは17。
+今回の検証器が求める「一般権限＋実PostgreSQL 18」の条件と一致しない。
+
+今回の追加
+- 元の完全ソースを保持し、検証器だけLinuxで実行可能にする分岐を追加。
+- Linux側も一般ユーザー・新規専用フォルダー・所有者のみアクセス・
+  127.0.0.1の新規DB・ランダムな資格情報という条件を保持。
+- .github/workflows/native-postgresql-18.yml を追加。
+- 2026-10-06の初回Linux CIで確認したPostgreSQL起動失敗に対し、
+  検証用クラスタのUnixソケットを無効化。検査は127.0.0.1のTCPを使う。
+  2026-10-06の再実行ではPostgreSQL起動を通過した。
+  その後native_day_lock_blocks_until_releaseでFAIL。今回の後片付け修正は未検証。
+- このワークフローは「private repositoryで手動起動」のときだけ動く。
+- GitHubの開発用Ubuntu環境に搭載されるPostgreSQL 18を使用。
+- 実行後に外部へ残すのは状態と検査名だけの結果JSON。DB、dump、
+  パスワード、患者レコード、実行ログ全文は成果物としてアップロードしない。
+
+重要な境界
+これはGitHub Pages公開アプリの更新ではない。
+GitHubへ置く場合は、患者情報のない開発用ソースだけを新しい非公開リポジトリへ。
+実患者情報・院内設定・本番資格情報をアップロードしない。
+GitHub Actionsは外部サービス上で動くため、本番OZの運用には使用しない。
+現在の公開デモリポジトリへこのZIPを置かない。
+
+結果の見方
+native-linux-ci-results.json の platform が Linux で、nativePostgreSql、
+apiRestartRecovery、backupRestore が PASS、cleanupPassed が true、
+checks に FAIL がないことを確認する。
+途中で止まった場合はチェック名と安全な例外種別だけを確認し、PASSとしない。
+仮に全てPASSでも「Linux上の実PostgreSQL 18検証PASS」に限る。
+Windows上の実DB、実スマホ、院内LAN、印刷、Excel連携は別途未実施。
+
+実施手順（非公開リポジトリを用意した後）
+1. 本ZIPの中身を新しい private リポジトリのルートへ一括配置する。
+   GitHub Pages用の公開リポジトリには配置しない。
+2. GitHubの Actions で「OZ synthetic PostgreSQL 18 verification」を選び、
+   Run workflow を一回実行する。
+3. 実行結果の右上に成功が出ても、テストの詳細と結果JSONを確認する。
+   成果物名: oz-native-linux-postgresql-18-result（保持1日）。
+4. native-linux-ci-results.json の内容だけをこの会話へ貼る。
+   フォルダー全体、DBファイル、ログ全文、秘密情報は送らない。
+
+検証状態
+この配布元では.NET SDKとPostgreSQLを実行できないため、今回の新分岐と
+GitHub Actionsワークフローは未実行。コード・ZIPの保存範囲と構成を静的照合。
+Golden Master未昇格。前工程のEdgeブラウザ40項目PASSは別環境・別対象。

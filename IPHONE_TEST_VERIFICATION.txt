@@ -1,0 +1,27 @@
+Historical v2 record. Current scope: CONFLICT_DIALOG_VERIFICATION.txt.
+
+2026-10-07 home-test connection fix v2
+
+Cause: original centralConnect rejected the proxy's Wi-Fi origin, leaving no
+editor session or monthly data. The edit guard then blocked pointer editing.
+The response adapter now permits exactly the selected temporary IP:port.
+The production UI's localhost restriction remains byte-identical.
+
+PASS: Node syntax validation of iphone.mjs and iphone-page.mjs.
+PASS: original centralConnect rejects Wi-Fi origin (cause reproduced).
+PASS: adapted centralConnect calls editor connect and board/month refresh.
+PASS: other IPs, ports and protocols are rejected.
+PASS: changed UI markers and public IP configuration fail closed.
+PASS: all adapted scripts parse and explicit connection status is present.
+Command: node --test browser-tests/iphone-page.test.mjs (5/5 PASS).
+
+User observation on previous build: iPhone monthly matrix and sticky PT names
+worked; long press failed on both iPhone and PC.
+NOT_RUN for v2: full Windows server startup and real PC/iPhone interactions.
+No .NET SDK here: no full API/browser rerun is claimed by this fix.
+Previous Linux PostgreSQL 18 report: 25/25 PASS (not rerun here).
+Previous synthetic browser report: 40/40 PASS (not rerun here).
+Hospital LAN: NOT_RUN. Golden Master: NOT_PROMOTED.
+
+All original complete iPhone ZIP files are retained. Only iphone.mjs and two
+home-test documents change. iphone-page.mjs and its tests are added.

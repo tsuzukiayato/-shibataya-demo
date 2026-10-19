@@ -1,0 +1,19 @@
+柴田屋OZ / 架空データ専用・実PostgreSQL 18検証 修正
+2026-10-07
+
+前回のGitHub Actionsでは実PostgreSQL 18の起動とロック待ちの観測が通過しました。
+ロックを解放し、HTTP 200と予約表再読込を確認した直後に
+native_day_lock_blocks_until_release が InvalidOperationException で失敗しました。
+
+今回の修正：
+verification/Native/ApiChecks.cs の検証後片付けで、コミット済みの
+トランザクションの Connection プロパティにアクセスしていた箇所を変更。
+コミットが済んだかを明示的に記録し、未コミット時だけロールバックします。
+業務API・画面・DBスキーマは変更していません。
+前回のUnixソケット起動修正もすべて含む、完全な122ファイルのチェックポイントです。
+
+未検証：この修正後のGitHub Actionsの実行結果。PASSとは記録しません。
+確認方法：private リポジトリで今回のZIPの中身をルートへ上書きし、
+Actionsの「OZ synthetic PostgreSQL 18 verification」を手動実行します。
+ログのPASS/FAILと成果物 native-linux-ci-results.json を確認してください。
+これは公開GitHub Pages用ではありません。実患者情報は含めないでください。

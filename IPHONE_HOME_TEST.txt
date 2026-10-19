@@ -1,0 +1,44 @@
+Current package: v3 conflict dialog. Read CONFLICT_DIALOG_START.txt first.
+The text below retains the v2 connection-fix history.
+
+OZ iPhone Safari home-Wi-Fi test checkpoint v2 - connection fix
+
+2026-10-07 fix: the previous response kept the localhost-only centralConnect
+guard, so a paired Wi-Fi page displayed the layout but could not connect the
+editor session. PC and iPhone edits were blocked. The adapter now permits
+exactly the temporary proxy IP and port in the served fake-data response.
+The production UI, server, schema and existing tests remain unchanged.
+
+Japanese quick start (v2):
+1. テスト実行中ならPowerShellでCtrl+Cを押して停止。
+2. ZIPを解凍し、中身を既存のOZ_iPhone_Home_Safari_Fake_Data_Checkpoint
+   フォルダーへまとめて上書き。node_modulesの削除は不要。
+3. 同じフォルダーの通常PowerShellで次を実行。
+   .\browser-tests\Run-iPhone-Home-Test.ps1 -WifiAddress '192.168.24.28'
+4. 新しいURLをSafariのアドレス欄に入力。
+5. 右下の「編集接続済み」を確認してから月間シフトを操作。
+6. 都築×7日を長押し、円形メニューの方向へ動かして離す。
+   PCでも新しいURLを開く。古いページの再利用はしない。
+Wi-Fiアドレスが変わった場合は現在のWi-Fiアドレスを指定してください。
+
+Current evidence: iPhone matrix display and sticky PT names were observed by
+the user. The v2 connection fix needs a fresh manual PC/iPhone interaction check.
+
+This complete ZIP copies the previous native-day-lock checkpoint. The existing reservation UI, server, database schema, native tests and GitHub Actions workflow are unchanged. Only browser-tests/iphone.mjs, browser-tests/Run-iPhone-Home-Test.ps1 and this guide are added.
+
+Purpose: manual real-iPhone Safari observation on a personal home Wi-Fi, using an ephemeral PGlite fixture with 204 fictional patients. This is NOT a native PostgreSQL check, clinic LAN check, production server or Golden Master promotion. The revised helper still needs a manual iPhone edit check.
+
+1. Extract the ZIP to a fresh folder on the home Windows PC. Do not place it in the public GitHub Pages repository.
+2. Open an ordinary PowerShell in the extracted folder. Do not run as administrator.
+3. If PowerShell reports a downloaded unsigned script, use the same process-only RemoteSigned + Unblock-File method already used for the earlier verification script. Do not change machine-wide policy.
+4. Run:  .\browser-tests\Run-iPhone-Home-Test.ps1
+5. The script prepares pinned Node packages if absent, builds the server from the existing local .NET package cache, then starts an in-memory fictional database and a private-Wi-Fi test address. It prints a short pairing URL. No real patient database can be selected; the server checks for oz_demo on 127.0.0.1. The first Node package preparation can require Internet on the home development PC.
+6. On the iPhone, connect to the same home Wi-Fi, open Safari and type the exact printed URL. Keep PowerShell open. If Windows Firewall prompts, choose Private network only. Do not enable Public network and do not configure router port forwarding.
+7. Check the month matrix (12 PT rows, all days), horizontal swipe with PT names fixed, long press then flick and release for a shift, switch to the corresponding date's reservation board, search fictional number 10046 (one result), book and then cancel a fictional appointment. Capture screenshots that contain fictional names only.
+8. Finish by pressing Ctrl+C in PowerShell. The helper also closes itself after 20 minutes. Closing the test does not change the normal server settings.
+
+Do not use actual patient names, numbers, screenshots, or exports. If Safari cannot connect or the UI does not work, report the exact screen and PowerShell error; do not alter firewall rules or disable Windows protection to force success.
+
+On a home network, the short-lived test address is HTTP, because this is a fictional-data-only observation. The pairing code restricts access to a browser session, but HTTP is not appropriate for real patient data. The helper adapts UUID creation in the served copy of the UI so it can run in Safari's HTTP context; the checked-in UI file is unchanged. This adaptation means the test is not evidence of a production HTTPS deployment.
+
+The previously downloaded native-linux-ci-results.json remains the authoritative record of 25/25 PostgreSQL 18 Linux checks. This iPhone test does not replace it.

@@ -1,0 +1,53 @@
+柴田屋OZ 検証用DB起動待ち修正 — 2026-10-04
+
+今回の変更
+pg_ctl起動時だけ標準出力・標準エラーのパイプ取得を無効化。
+DBの出力は従来どおり専用postgresql.logへ記録。
+子プロセス終了と出力EOF待機の両方に共通タイムアウトを適用。
+初期化・起動の進行表示を追加。
+既存予約表・月間シフト・API・DBスキーマ・ブラウザテストはバイト単位で同一。
+保護確認はreports/native-start-fix-preservation.jsonに収録。
+
+経緯（ユーザー提示のWindows実行結果）
+Windows Edge + PGliteによるブラウザ40項目PASS、cleanup PASS。
+PostgreSQL 18.6確認成功。
+実DBはready to accept connectionsまで正常起動したが、起動完了の出力待ちで停止。
+専用クラスタを手動停止するとfresh_loopback_cluster_initializedがPASSになり、
+停止済みDBへの接続fresh_databases_run_markerがFAILになった。
+この試行を実PostgreSQL全体PASSとして扱わない。
+
+再実行
+ZIPは開発用完全ソース一式。GitHubへのアップロード不要。
+元の展開フォルダーへ全ファイルを上書きする。消去やDB移行は不要。
+通常権限の、RemoteSignedをProcessに設定済みのPowerShellを使用。
+Unblock-File -LiteralPath '.\verification\windows\Run-Verification.ps1'
+.\verification\windows\Run-Verification.ps1
+
+結果は最後に表示される新しいnative-results.jsonで確認。
+Windowsでの修正版実PostgreSQL確認は未実施。実スマホ・院内LAN・印刷・
+Excelマッピング・本番個人認証/TLS等も未実施。Golden Master未昇格。
+以前の報告は履歴として残し、本ファイルと修正用レポートで今回の差分を説明。
+
+配布元検証: Releaseビルド警告0/エラー0、自己テスト11項目PASS。
+Windows実DB再実行はユーザー側で結果を確認してから判定する。
+
+追加修正（2026-10-04 23:10のユーザー報告を受けて）
+Windows実DBの起動待ち問題は解消。同枠同時予約1勝者までPASS。
+concurrent_identical_operation_saved_onceでFAILとなった。
+ApiChecks.csは初回応答とjsonb保存後の再送応答をGetRawTextで比較しており、
+項目順の違いでも失敗する欠陥があった。JsonElement.DeepEqualsへ変更。
+同一操作のHTTP成功・同一内容・operation_receipt増分1の条件はすべて保持。
+HTTPステータス/内容一致/件数増分のみの診断表示を追加（資格情報や患者本文なし）。
+順序だけの変更は許可し、値変更・項目欠落は拒否する自己テスト追加。
+旧レポートは履歴。最新の自己テストは12項目。Windows全項目合格は未確認。
+参考: https://www.postgresql.org/docs/18/datatype-json.html
+参考: https://learn.microsoft.com/en-us/dotnet/api/system.text.json.jsonelement.deepequals?view=net-10.0
+
+ロック検査診断版（2026-10-04 23:20）
+実Windowsで同一操作HTTP200/200、内容一致、受付増分1がPASS。
+ロック検査は584msでFAIL、cleanupPassed=true。DBログに該当ERROR/FATALなし。
+理由は未特定。ロック取得、待機観測、解除、再読込の段階表示を追加。
+ロック観測と解除前未完了、解除後200という合格条件は変更しない。
+例外型とSQLSTATEのみの診断を追加。例外メッセージ/SQL/資格情報は出さない。
+自己テスト13項目。Windows診断版の結果はまだ未実施。
+INFO day_lockで止まる段階を確認してから根本修正する。

@@ -1,0 +1,24 @@
+2026-10-07 v3 conflict notification candidate
+Base: complete OZ_iPhone_Home_Safari_Connection_Fix_v2.zip from saved artifact.
+
+PASS: unchanged frozen app/candidate/baseline, server C# sources, SQL schema,
+native verification and existing Pointer functions retained byte-for-byte.
+Changed: central UI error presentation and edit lock, build bundling and derived
+server HTML; test-response banner v3. New dialog module, test and instructions.
+
+PASS: node tests/conflict-dialog-test.cjs (5 checks):
+ - actual gateway 409 -> latest winning reservation + persistent focused dialog
+ - edits and poll paused until OK; OK does not replay rejected command
+ - subsequent deliberate operation works after acknowledgement
+ - lost response remains uncertain, never mislabeled as rejected
+ - nonconflict errors preserve existing handling; centered responsive markup
+PASS: node tests/gateway-test.cjs (8 existing checks).
+PASS: node tests/baseline-equivalence.cjs (15 existing checks).
+PASS: node --test browser-tests/iphone-page.test.mjs (5 existing checks).
+PASS: build-central frozen source hash gates and inline JavaScript syntax.
+
+NOT_RUN: actual browser geometry/visual check (no browser binary in this runtime),
+full .NET API/browser suite (no SDK), new real iPhone/PC conflict-dialog check.
+The previous user-observed iPhone UI and home-PC synchronization checks remain
+historical evidence, not a claim that this new notification passed real devices.
+Native PostgreSQL/LAN/production checks were not rerun. Golden Master not promoted.

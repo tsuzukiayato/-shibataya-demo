@@ -1,0 +1,26 @@
+OZ v3 競合時の中央通知追加版（全ファイル入り）
+
+変更内容:
+同時予約等でサーバーが競合を拒否すると、画面中央に
+「他の更新を検出しました」「今回の予約・変更は保存されていません」
+を表示。OKを押すまで通知を残し、背景の編集を停止します。
+OKを押すと最新の予約表を操作できます。失敗した予約を自動再送しません。
+通信断で保存結果が不明な場合は、既存の結果確認手順を維持します。
+
+使い方:
+1. テスト実行中ならPowerShellでCtrl+Cを押して停止。
+2. このZIPをすべて展開し、中身を既存の
+   OZ_iPhone_Home_Safari_Fake_Data_Checkpoint フォルダーへ上書き。
+   ZIP自体をそのフォルダーへ置くだけでは更新されません。
+3. 同じフォルダーの通常PowerShellで実行:
+   Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
+   Unblock-File -LiteralPath '.\browser-tests\Run-iPhone-Home-Test.ps1'
+   .\browser-tests\Run-iPhone-Home-Test.ps1 -WifiAddress '192.168.24.28'
+4. 新しいURLをPCとiPhoneで開く。右下「v3／編集接続済み」を確認。
+5. 別々の架空患者を同じ空き枠へほぼ同時に予約。
+   競合で拒否された側に中央通知が出ること、OKで閉じること、
+   先に確定した予約が残ることを確認。
+6. 終了はCtrl+C。テストは20分でも自動停止します。
+
+GitHubへアップロードする必要はありません。架空データ検証専用です。
+本番患者情報は入力しないでください。

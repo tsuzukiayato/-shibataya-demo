@@ -1,0 +1,32 @@
+実績管理 v4 検証範囲 — 2026-10-07
+
+今回の自動結果：reports/actual-v4-verification.json
+既存機能の原本一致15項目、競合UI5項目、Gateway9項目、
+iPhone向け接続アダプター5項目、実績UI5項目、実績SQL3項目を実行。
+追加でビルド済みHTMLのインラインJavaScript構文を確認。
+UI試験はNode VMで実行。SQL試験はPGliteで実行。
+実ブラウザ、実PostgreSQL並行性試験とは異なります。
+
+今回未実施：.NETビルド、ASP.NETとのHTTP統合、新版Windows起動、
+実PC/実iPhone操作、本番院内LAN、印刷/Excel、実績訂正。
+この環境に.NET SDKとブラウザ実行環境がないため、PASSと表記しません。
+tests/fixture/integration.mjsには実績履歴・認証・再送のHTTP試験を追加済みですが未実行。
+
+変更した責務
+database/002_actual_cancelled.sql：既存実績を残す状態追加と確定順序。
+server：実績記録/キャンセル枠解放を従来のトランザクション内で処理。
+frontend/central/actual-ui.js：実績ボタン・状態表示・履歴一覧。
+central-gateway：認証付き実績履歴読取。
+build-central：原本から実績付き中央画面を生成。
+iphone-page：v4識別表示。通信境界はv3と同じ。
+
+原本保存とUIの保護
+frontend/src/app.js と candidate/index.html はv3と完全同一。
+database/001_initial.sql は同一。競合ダイアログのソースも同一。
+月間シフト表をPTカード形式へ変更していません。
+公開GitHub Pages版・GitHubリポジトリへの書込は行っていません。
+実績行をそのまま患者人数として集計しません。
+実績訂正とExcel列マッピングは別途確認が必要です。
+
+Golden Master：v3の確認済み基準を保持。v4は実機確認待ちの候補。
+本番完成宣言：行わない。
